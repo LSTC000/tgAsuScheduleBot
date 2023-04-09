@@ -1,0 +1,1 @@
+START_FIND_DAILY_SCHEDULE_MESSAGE = '⏳ Начинаю поиск...'

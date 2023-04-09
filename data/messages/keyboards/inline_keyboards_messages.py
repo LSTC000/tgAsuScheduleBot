@@ -1,0 +1,8 @@
+FOLLOW_URL_IKB_BUTTON_MESSAGE = 'Перейти 🚀'
+
+GET_TOMORROW_SCHEDULE_IKB_BUTTON_MESSAGE = 'Получить расписание на завтра ➡'
+GET_WEEKLY_SCHEDULE_IKB_BUTTON_MESSAGE = 'Получить расписание на текущую неделю 📝'
+GET_CALENDAR_IKB_BUTTON_MESSAGE = 'Календарь 📅'
+
+CONFIRM_IKB_BUTTON_MESSAGE = '🗑️'
+CANCEL_IKB_BUTTON_MESSAGE = '❌'
