@@ -1,3 +1,5 @@
+from data.memory_storage import CHAT_GPT_MESSAGES_KEY, COUNT_CHAT_GPT_MESSAGES_KEY
+
 from data.config import (
     RATE_LIMIT_DICT,
     CHAT_GPT_MESSAGE_KEY,
@@ -60,19 +62,19 @@ async def chat_gpt_response(message: types.Message, state: FSMContext) -> None:
         async with state.proxy() as data:
             try:
                 # Add the user message to the history of the Chat GPT dialog.
-                data['chat_gpt_messages'].append({"role": "user", "content": content})
-                data['count_chat_gpt_messages'] += 1
+                data[CHAT_GPT_MESSAGES_KEY].append({"role": "user", "content": content})
+                data[COUNT_CHAT_GPT_MESSAGES_KEY] += 1
                 # Send a request to receive a response from Chat GPT.
                 response = await openai.ChatCompletion.acreate(
                     model=MODEL,
-                    messages=data['chat_gpt_messages'],
+                    messages=data[CHAT_GPT_MESSAGES_KEY],
                     temperature=TEMPERATURE
                 )
                 # If the response from Chat GPT has arrived then add it to the history of the dialog.
                 # And assign a message counter to the response.
                 model_content = response['choices'][0]['message']['content']
-                data['chat_gpt_messages'].append({"role": CHAT_GPT_ROLE, "content": model_content})
-                model_content = f"<b>{data['count_chat_gpt_messages']}/{MAX_CHAT_GPT_MESSAGES}:</b> " + model_content
+                data[CHAT_GPT_MESSAGES_KEY].append({"role": CHAT_GPT_ROLE, "content": model_content})
+                model_content = f"<b>{data[COUNT_CHAT_GPT_MESSAGES_KEY]}/{MAX_CHAT_GPT_MESSAGES}:</b> " + model_content
                 # Counting tokens.
                 count_tokens = len(model_content)
                 # If the number of tokens is greater than the MAX_TOKENS.
@@ -89,10 +91,10 @@ async def chat_gpt_response(message: types.Message, state: FSMContext) -> None:
                     await bot.send_message(chat_id=message.from_user.id, text=model_content)
                 # If the message limit for one dialog with Chat GPT is reached.
                 # Then we clear it and send a message to the user about it.
-                if data['count_chat_gpt_messages'] == MAX_CHAT_GPT_MESSAGES:
-                    data['chat_gpt_messages'].clear()
-                    data['chat_gpt_messages'].append(CHAT_GPT_ASSISTANT_SYSTEM_MESSAGE)
-                    data['count_chat_gpt_messages'] = 0
+                if data[COUNT_CHAT_GPT_MESSAGES_KEY] == MAX_CHAT_GPT_MESSAGES:
+                    data[CHAT_GPT_MESSAGES_KEY].clear()
+                    data[CHAT_GPT_MESSAGES_KEY].append(CHAT_GPT_ASSISTANT_SYSTEM_MESSAGE)
+                    data[COUNT_CHAT_GPT_MESSAGES_KEY] = 0
 
                     await bot.send_message(
                         chat_id=user_id,

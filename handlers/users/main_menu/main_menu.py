@@ -1,3 +1,5 @@
+from data.memory_storage import COUNT_CHAT_GPT_MESSAGES_KEY, CHAT_GPT_MESSAGES_KEY
+
 from data.config import CHAT_GPT_ASSISTANT_SYSTEM_MESSAGE, RATE_LIMIT_DICT, MENU_REPLAY_KEYBOARD_KEY
 
 from data.messages import (
@@ -46,8 +48,8 @@ async def main_menu(message: types.Message, state: FSMContext) -> None:
     elif text == CHAT_GPT_MENU_RKB_MESSAGE:
         # Create variables in the user memory storage.
         async with state.proxy() as data:
-            data['chat_gpt_messages'] = [CHAT_GPT_ASSISTANT_SYSTEM_MESSAGE]
-            data['count_chat_gpt_messages'] = 0
+            data[CHAT_GPT_MESSAGES_KEY] = [CHAT_GPT_ASSISTANT_SYSTEM_MESSAGE]
+            data[COUNT_CHAT_GPT_MESSAGES_KEY] = 0
 
         await bot.send_message(
             chat_id=message.from_user.id,

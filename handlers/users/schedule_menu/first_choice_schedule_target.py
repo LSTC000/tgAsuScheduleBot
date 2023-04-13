@@ -1,3 +1,9 @@
+from data.memory_storage import (
+    TARGET_KEY,
+    SCHEDULE_INLINE_KEYBOARDS_KEY,
+    INLINE_CALENDAR_KEY
+)
+
 from data.config import STUDENT_TARGET, LECTURER_TARGET, RATE_LIMIT_DICT, MENU_REPLAY_KEYBOARD_KEY
 
 from data.messages import (
@@ -31,18 +37,18 @@ async def first_choice_schedule_target(message: types.Message, state: FSMContext
         msg = ENTER_STUDENT_TARGET_NAME_MESSAGE
         # Create variables in the user memory storage.
         async with state.proxy() as data:
-            data['target'] = STUDENT_TARGET
-            data['message_id_last_schedule_inline_keyboards'] = []
-            data['calendar_message_id'] = None
+            data[TARGET_KEY] = STUDENT_TARGET
+            data[SCHEDULE_INLINE_KEYBOARDS_KEY] = []
+            data[INLINE_CALENDAR_KEY] = None
 
         await ScheduleMenuStatesGroup.student_schedule.set()
     else:
         msg = ENTER_LECTURER_TARGET_NAME_MESSAGE
         # Create variables in the user memory storage.
         async with state.proxy() as data:
-            data['target'] = LECTURER_TARGET
-            data['message_id_last_schedule_inline_keyboards'] = []
-            data['calendar_message_id'] = None
+            data[TARGET_KEY] = LECTURER_TARGET
+            data[SCHEDULE_INLINE_KEYBOARDS_KEY] = []
+            data[INLINE_CALENDAR_KEY] = None
 
         await ScheduleMenuStatesGroup.lecturer_schedule.set()
 

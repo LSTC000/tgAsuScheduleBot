@@ -1,3 +1,9 @@
+from data.memory_storage import (
+    INLINE_CALENDAR_KEY,
+    SCHEDULE_INLINE_KEYBOARDS_KEY,
+    LAST_CHAT_GPT_INLINE_KEYBOARD_KEY
+)
+
 from data.config import RATE_LIMIT_DICT, COMMAND_KEY
 
 from data.messages import START_COMMAND_MESSAGE, MAIN_MENU_COMMAND_MESSAGE
@@ -28,18 +34,18 @@ async def start_command(message: types.Message, state: FSMContext) -> None:
         async with state.proxy() as data:
             try:
                 # Hiding all the schedule inline keyboards from the user for the last target if there are any.
-                if data['message_id_last_schedule_inline_keyboards']:
-                    for message_id in data['message_id_last_schedule_inline_keyboards']:
+                if data[SCHEDULE_INLINE_KEYBOARDS_KEY]:
+                    for message_id in data[SCHEDULE_INLINE_KEYBOARDS_KEY]:
                         await bot.edit_message_reply_markup(
                             chat_id=user_id,
                             message_id=message_id,
                             reply_markup=None
                         )
                 # Delete the last calendar inline keyboard if there is one.
-                if data['calendar_message_id'] is not None:
+                if data[INLINE_CALENDAR_KEY] is not None:
                     await bot.delete_message(
                         chat_id=user_id,
-                        message_id=data['calendar_message_id']
+                        message_id=data[INLINE_CALENDAR_KEY]
                     )
 
                 data.clear()
@@ -59,7 +65,7 @@ async def start_command(message: types.Message, state: FSMContext) -> None:
             try:
                 await bot.delete_message(
                     chat_id=user_id,
-                    message_id=data['message_id_last_chat_gpt_inline_keyboard']
+                    message_id=data[LAST_CHAT_GPT_INLINE_KEYBOARD_KEY]
                 )
                 data.clear()
             except KeyError:

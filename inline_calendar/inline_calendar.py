@@ -3,6 +3,8 @@ from datetime import datetime, timedelta
 
 from data.callbacks import CALLBACK_DATA_GET_CALENDAR_SCHEDULE_SEPARATOR
 
+from data.memory_storage import INLINE_CALENDAR_DATA_KEY, INLINE_CALENDAR_KEY
+
 from data.config import RU_MONTH_NAME
 
 from data.messages import CALLBACK_DATA_KEY_ERROR_MESSAGE
@@ -16,7 +18,7 @@ class InlineCalendar:
     async def start_calendar(self, year: int, month: int, state: FSMContext) -> InlineKeyboardMarkup:
         # Create a dictionary in the user memory storage for storing the year and month.
         async with state.proxy() as data:
-            data['inline_calendar'] = {
+            data[INLINE_CALENDAR_DATA_KEY] = {
                 'year': year,
                 'month': month
             }
@@ -76,8 +78,8 @@ class InlineCalendar:
 
         try:
             async with state.proxy() as data:
-                year = int(data['inline_calendar']['year'])
-                month = int(data['inline_calendar']['month'])
+                year = int(data[INLINE_CALENDAR_DATA_KEY]['year'])
+                month = int(data[INLINE_CALENDAR_DATA_KEY]['month'])
                 temp_date = datetime(year, month, 1)
             # IGNORE is callback data in CALLBACK_DATA_GET_CALENDAR_SCHEDULE from data/config/callbacks/callbacks_data.
             if callback_data == "IGNORE":
@@ -86,7 +88,7 @@ class InlineCalendar:
             if CALLBACK_DATA_GET_CALENDAR_SCHEDULE_SEPARATOR in callback_data:
                 async with state.proxy() as data:
                     await callback.message.delete_reply_markup()
-                    data['calendar_message_id'] = None
+                    data[INLINE_CALENDAR_KEY] = None
 
                 return_data = True, datetime(
                     year,

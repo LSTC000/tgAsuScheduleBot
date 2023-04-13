@@ -1,5 +1,12 @@
 from data.callbacks import CALLBACK_DATA_GET_WEEKLY_SCHEDULE
 
+from data.memory_storage import (
+    TARGET_KEY,
+    TARGET_URL_KEY,
+    ALLEGED_TARGET_NAME_KEY,
+    SCHEDULE_INLINE_KEYBOARDS_KEY
+)
+
 from data.config import SCHEDULE_INLINE_KEYBOARD_KEY, RATE_LIMIT_DICT
 
 from data.messages import CALLBACK_DATA_KEY_ERROR_MESSAGE, START_FIND_WEEKLY_SCHEDULE_MESSAGE
@@ -36,15 +43,15 @@ async def get_weekly_schedule(callback: types.CallbackQuery, state: FSMContext) 
         async with state.proxy() as data:
             in_cache = False
             # Checking for a request in the schedule_cache.
-            key_cache = f"{data['alleged_target_name']} week"
+            key_cache = f"{data[ALLEGED_TARGET_NAME_KEY]} week"
             if key_cache in schedule_cache:
                 in_cache = True
             # If the request is not in the schedule_cache then we will execute it.
             if not in_cache:
                 schedule = await weekly_schedule(
                     chat_id=user_id,
-                    target=data['target'],
-                    target_weekly_schedule_url=data['target_url']
+                    target=data[TARGET_KEY],
+                    target_weekly_schedule_url=data[TARGET_URL_KEY]
                 )
                 # Put the weekly_schedule data in the schedule_cache.
                 schedule_cache[key_cache] = schedule
@@ -57,15 +64,15 @@ async def get_weekly_schedule(callback: types.CallbackQuery, state: FSMContext) 
                 msg = processing_parser_errors(
                     error_code=schedule,
                     user_name=callback.from_user.first_name,
-                    target=data['target']
+                    target=data[TARGET_KEY]
                 )
                 await bot.send_message(chat_id=user_id, text=msg)
             elif isinstance(schedule, str):
                 # Processing parser none schedule error from errors/parsers/weekly_schedule_parser.
                 msg = processing_parser_none_schedule_error(
-                    target_weekly_schedule_url=data['target_url'],
+                    target_weekly_schedule_url=data[TARGET_URL_KEY],
                     user_name=callback.from_user.first_name,
-                    target=data['target'],
+                    target=data[TARGET_KEY],
                     daily=False,
                     today=True,
                     calendar=False
@@ -73,13 +80,13 @@ async def get_weekly_schedule(callback: types.CallbackQuery, state: FSMContext) 
 
                 message = await bot.send_message(chat_id=user_id, text=msg, reply_markup=get_calendar_ikb())
                 # Add selected inline keyboard.
-                data['message_id_last_schedule_inline_keyboards'].append(message.message_id)
+                data[SCHEDULE_INLINE_KEYBOARDS_KEY].append(message.message_id)
             else:
                 # Create report for a weekly schedule.
                 report_list = create_report_weekly_schedule(
-                    target=data['target'],
+                    target=data[TARGET_KEY],
                     target_schedule=schedule[0],
-                    target_name=data['alleged_target_name'],
+                    target_name=data[ALLEGED_TARGET_NAME_KEY],
                     target_table_headers=schedule[2]
                 )
 
@@ -90,7 +97,7 @@ async def get_weekly_schedule(callback: types.CallbackQuery, state: FSMContext) 
                     else:
                         message = await bot.send_message(chat_id=user_id, text=report, reply_markup=get_calendar_ikb())
                         # Add selected inline keyboard.
-                        data['message_id_last_schedule_inline_keyboards'].append(message.message_id)
+                        data[SCHEDULE_INLINE_KEYBOARDS_KEY].append(message.message_id)
     except KeyError:
         await bot.send_message(chat_id=user_id, text=CALLBACK_DATA_KEY_ERROR_MESSAGE)
 

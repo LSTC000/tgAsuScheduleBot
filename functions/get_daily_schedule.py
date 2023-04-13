@@ -1,5 +1,16 @@
 from data.config import STUDENT_TARGET
 
+from data.memory_storage import (
+    TARGET_KEY,
+    TARGET_URL_KEY,
+    ALLEGED_TARGET_NAME_KEY,
+    ALLEGED_TARGET_INFO_KEY,
+    TARGET_DATE_QUERY_URL_CODE_KEY,
+    TODAY_TARGET_DATE_QUERY_URL_CODE_KEY,
+    TOMORROW_TARGET_DATE_QUERY_URL_CODE_KEY,
+    SCHEDULE_INLINE_KEYBOARDS_KEY
+)
+
 from data.messages import (
     START_FIND_DAILY_SCHEDULE_MESSAGE,
     CHOICE_ALLEGED_STUDENT_TARGET_MESSAGE,
@@ -51,17 +62,17 @@ async def get_daily_schedule(
         async with state.proxy() as data:
             in_cache = False
             # Checking for a request in the schedule_cache.
-            key_cache = f"{data['alleged_target_name']} {data['target_date_query_url_code']}"
+            key_cache = f"{data[ALLEGED_TARGET_NAME_KEY]} {data[TARGET_DATE_QUERY_URL_CODE_KEY]}"
             if key_cache in schedule_cache:
                 in_cache = True
             # If the request is not in the schedule_cache then we will execute it.
             if not in_cache:
                 schedule = await daily_schedule(
                     chat_id=chat_id,
-                    target=data['target'],
-                    target_url=data['target_url'],
-                    alleged_target_name=data['alleged_target_name'],
-                    target_date_query_url_code=data['target_date_query_url_code']
+                    target=data[TARGET_KEY],
+                    target_url=data[TARGET_URL_KEY],
+                    alleged_target_name=data[ALLEGED_TARGET_NAME_KEY],
+                    target_date_query_url_code=data[TARGET_DATE_QUERY_URL_CODE_KEY]
                 )
                 # Put the daily_schedule data in the schedule_cache.
                 schedule_cache[key_cache] = schedule
@@ -74,7 +85,7 @@ async def get_daily_schedule(
                 msg = processing_parser_errors(
                     error_code=schedule,
                     user_name=user_name,
-                    target=data['target']
+                    target=data[TARGET_KEY]
                 )
                 await bot.send_message(chat_id=chat_id, text=msg)
             elif isinstance(schedule, dict):
@@ -82,69 +93,69 @@ async def get_daily_schedule(
 
                 # These are variables that store in memory storage the name of the alleged target
                 # and an url to its weekly schedule.
-                data['alleged_target_info'] = schedule
+                data[ALLEGED_TARGET_INFO_KEY] = schedule
 
-                if data['target'] == STUDENT_TARGET:
+                if data[TARGET_KEY] == STUDENT_TARGET:
                     msg = CHOICE_ALLEGED_STUDENT_TARGET_MESSAGE
                 else:
                     msg = CHOICE_ALLEGED_LECTURER_TARGET_MESSAGE
 
-                alleged_target_ikb = get_alleged_target_name_ikb(data['alleged_target_info'])
+                alleged_target_ikb = get_alleged_target_name_ikb(data[ALLEGED_TARGET_INFO_KEY])
 
                 message = await bot.send_message(chat_id=chat_id, text=msg, reply_markup=alleged_target_ikb)
                 # Add selected inline keyboard.
-                data['message_id_last_schedule_inline_keyboards'].append(message.message_id)
+                data[SCHEDULE_INLINE_KEYBOARDS_KEY].append(message.message_id)
             elif isinstance(schedule, list):
                 # Processing parser none schedule error from errors/parsers/daily_schedule_parser.
 
                 # Check this data variables in handlers/users/schedule_menu/get_today_schedule.
-                data['alleged_target_name'] = schedule[0]
-                data['target_url'] = schedule[1]
+                data[ALLEGED_TARGET_NAME_KEY] = schedule[0]
+                data[TARGET_URL_KEY] = schedule[1]
 
                 msg = processing_parser_none_schedule_error(
-                    target_weekly_schedule_url=data['target_url'],
+                    target_weekly_schedule_url=data[TARGET_URL_KEY],
                     user_name=user_name,
-                    target=data['target'],
+                    target=data[TARGET_KEY],
                     daily=daily,
                     today=today,
                     calendar=calendar
                 )
                 # Check this data variables in handlers/users/schedule_menu/get_today_schedule.
-                if data['target_date_query_url_code'] == data['today_target_date_query_url_code']:
+                if data[TARGET_DATE_QUERY_URL_CODE_KEY] == data[TODAY_TARGET_DATE_QUERY_URL_CODE_KEY]:
                     ikb = get_today_schedule_ikb()
-                elif data['target_date_query_url_code'] == data['tomorrow_target_date_query_url_code']:
+                elif data[TARGET_DATE_QUERY_URL_CODE_KEY] == data[TOMORROW_TARGET_DATE_QUERY_URL_CODE_KEY]:
                     ikb = get_tomorrow_schedule_ikb()
                 else:
                     ikb = get_calendar_ikb()
 
                 message = await bot.send_message(chat_id=chat_id, text=msg, reply_markup=ikb)
                 # Add selected inline keyboard.
-                data['message_id_last_schedule_inline_keyboards'].append(message.message_id)
+                data[SCHEDULE_INLINE_KEYBOARDS_KEY].append(message.message_id)
             else:
                 # Create report for a daily schedule.
 
                 # Check this data variables in handlers/users/schedule_menu/get_today_schedule.
-                data['alleged_target_name'] = schedule[1]
-                data['target_url'] = schedule[2]
+                data[ALLEGED_TARGET_NAME_KEY] = schedule[1]
+                data[TARGET_URL_KEY] = schedule[2]
 
                 report = create_report_daily_schedule(
-                    target=data['target'],
+                    target=data[TARGET_KEY],
                     target_schedule=schedule[0],
-                    target_name=data['alleged_target_name'],
-                    target_url=data['target_url'],
+                    target_name=data[ALLEGED_TARGET_NAME_KEY],
+                    target_url=data[TARGET_URL_KEY],
                     target_table_headers=schedule[3]
                 )
                 # Check this data variables in handlers/users/schedule_menu/get_today_schedule.
-                if data['target_date_query_url_code'] == data['today_target_date_query_url_code']:
+                if data[TARGET_DATE_QUERY_URL_CODE_KEY] == data[TODAY_TARGET_DATE_QUERY_URL_CODE_KEY]:
                     ikb = get_today_schedule_ikb()
-                elif data['target_date_query_url_code'] == data['tomorrow_target_date_query_url_code']:
+                elif data[TARGET_DATE_QUERY_URL_CODE_KEY] == data[TOMORROW_TARGET_DATE_QUERY_URL_CODE_KEY]:
                     ikb = get_tomorrow_schedule_ikb()
                 else:
                     ikb = get_calendar_ikb()
 
                 message = await bot.send_message(chat_id=chat_id, text=report, reply_markup=ikb)
                 # Add selected inline keyboard.
-                data['message_id_last_schedule_inline_keyboards'].append(message.message_id)
+                data[SCHEDULE_INLINE_KEYBOARDS_KEY].append(message.message_id)
     except KeyError:
         await bot.send_message(chat_id=chat_id, text=CALLBACK_DATA_KEY_ERROR_MESSAGE)
 

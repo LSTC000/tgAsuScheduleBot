@@ -6,6 +6,11 @@ from data.callbacks import (
     CALLBACK_DATA_GET_CALENDAR_SCHEDULE_SEPARATOR,
 )
 
+from data.memory_storage import (
+    TARGET_DATE_QUERY_URL_CODE_KEY,
+    INLINE_CALENDAR_KEY
+)
+
 from data.config import RATE_LIMIT_DICT, SCHEDULE_INLINE_KEYBOARD_KEY
 
 from data.messages import CALENDAR_CHOICE_DATE_MESSAGE, CALENDAR_SELECTED_DATE_MESSAGE, CALLBACK_DATA_KEY_ERROR_MESSAGE
@@ -33,8 +38,8 @@ async def get_calendar(callback: types.CallbackQuery, state: FSMContext) -> None
     chat_id = callback.message.chat.id
     # Delete the last calendar inline keyboard if there is one.
     async with state.proxy() as data:
-        if data['calendar_message_id'] is not None:
-            await bot.delete_message(chat_id=chat_id, message_id=data['calendar_message_id'])
+        if data[INLINE_CALENDAR_KEY] is not None:
+            await bot.delete_message(chat_id=chat_id, message_id=data[INLINE_CALENDAR_KEY])
     # Calling the calendar inline keyboard.
     # Check inline_calendar/inline_calendar.
     message = await bot.send_message(
@@ -48,7 +53,7 @@ async def get_calendar(callback: types.CallbackQuery, state: FSMContext) -> None
     )
     # Remember calendar inline keyboard.
     async with state.proxy() as data:
-        data['calendar_message_id'] = message.message_id
+        data[INLINE_CALENDAR_KEY] = message.message_id
 
 
 @dp.callback_query_handler(
@@ -74,7 +79,7 @@ async def get_calendar_schedule(callback: types.CallbackQuery, state: FSMContext
         try:
             async with state.proxy() as data:
                 # Check this data variable in handlers/users/schedule_menu/get_today_schedule.
-                data['target_date_query_url_code'] = calendar_date.strftime('%Y%m%d')
+                data[TARGET_DATE_QUERY_URL_CODE_KEY] = calendar_date.strftime('%Y%m%d')
             # Get daily schedule: check functions/get_daily_schedule.
             await get_daily_schedule(
                 chat_id=chat_id,

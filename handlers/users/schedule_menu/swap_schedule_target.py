@@ -1,3 +1,5 @@
+from data.memory_storage import TARGET_KEY, SCHEDULE_INLINE_KEYBOARDS_KEY, INLINE_CALENDAR_KEY
+
 from data.config import STUDENT_TARGET, LECTURER_TARGET, RATE_LIMIT_DICT, MENU_REPLAY_KEYBOARD_KEY
 
 from data.messages import (
@@ -33,25 +35,25 @@ async def swap_schedule_target(message: types.Message, state: FSMContext) -> Non
 
         async with state.proxy() as data:
             # Hiding all the schedule inline keyboards from the user for the last target if there are any.
-            if data['message_id_last_schedule_inline_keyboards']:
-                for message_id in data['message_id_last_schedule_inline_keyboards']:
+            if data[SCHEDULE_INLINE_KEYBOARDS_KEY]:
+                for message_id in data[SCHEDULE_INLINE_KEYBOARDS_KEY]:
                     await bot.edit_message_reply_markup(
                         chat_id=chat_id,
                         message_id=message_id,
                         reply_markup=None
                     )
             # Delete the last calendar inline keyboard if there is one.
-            if data['calendar_message_id'] is not None:
+            if data[INLINE_CALENDAR_KEY] is not None:
                 await bot.delete_message(
                     chat_id=chat_id,
-                    message_id=data['calendar_message_id']
+                    message_id=data[INLINE_CALENDAR_KEY]
                 )
             # Clear all other data in the user's memory storage.
             data.clear()
             # Create variables in the user memory storage.
-            data['target'] = STUDENT_TARGET
-            data['message_id_last_schedule_inline_keyboards'] = []
-            data['calendar_message_id'] = None
+            data[TARGET_KEY] = STUDENT_TARGET
+            data[SCHEDULE_INLINE_KEYBOARDS_KEY] = []
+            data[INLINE_CALENDAR_KEY] = None
 
         await ScheduleMenuStatesGroup.student_schedule.set()
     else:
@@ -59,25 +61,25 @@ async def swap_schedule_target(message: types.Message, state: FSMContext) -> Non
 
         async with state.proxy() as data:
             # Hiding all the schedule inline keyboards from the user for the last target if there are any.
-            if data['message_id_last_schedule_inline_keyboards']:
-                for message_id in data['message_id_last_schedule_inline_keyboards']:
+            if data[SCHEDULE_INLINE_KEYBOARDS_KEY]:
+                for message_id in data[SCHEDULE_INLINE_KEYBOARDS_KEY]:
                     await bot.edit_message_reply_markup(
                         chat_id=chat_id,
                         message_id=message_id,
                         reply_markup=None
                     )
             # Delete the last calendar inline keyboard if there is one.
-            if data['calendar_message_id'] is not None:
+            if data[INLINE_CALENDAR_KEY] is not None:
                 await bot.delete_message(
                     chat_id=chat_id,
-                    message_id=data['calendar_message_id']
+                    message_id=data[INLINE_CALENDAR_KEY]
                 )
             # Clear all other data in the user's memory storage.
             data.clear()
             # Create variables in the user memory storage.
-            data['target'] = LECTURER_TARGET
-            data['message_id_last_schedule_inline_keyboards'] = []
-            data['calendar_message_id'] = None
+            data[TARGET_KEY] = LECTURER_TARGET
+            data[SCHEDULE_INLINE_KEYBOARDS_KEY] = []
+            data[INLINE_CALENDAR_KEY] = None
 
         await ScheduleMenuStatesGroup.lecturer_schedule.set()
 

@@ -1,10 +1,8 @@
 from data.callbacks import CALLBACK_DATA_CONFIRM_CHAT_GPT_CANCEL_TO_MAIN_MENU
 
-from data.config import (
-    RATE_LIMIT_DICT,
-    MENU_REPLAY_KEYBOARD_KEY,
-    CHAT_GPT_INLINE_KEYBOARD_KEY
-)
+from data.memory_storage import COUNT_CHAT_GPT_MESSAGES_KEY, LAST_CHAT_GPT_INLINE_KEYBOARD_KEY
+
+from data.config import RATE_LIMIT_DICT, MENU_REPLAY_KEYBOARD_KEY, CHAT_GPT_INLINE_KEYBOARD_KEY
 
 from data.messages import (
     MAIN_MENU_COMMAND_MESSAGE,
@@ -43,7 +41,7 @@ async def cancel_to_main_menu_from_chat_gpt_menu(message: types.Message, state: 
         async with state.proxy() as data:
             await bot.delete_message(
                 chat_id=chat_id,
-                message_id=data['message_id_last_chat_gpt_inline_keyboard']
+                message_id=data[LAST_CHAT_GPT_INLINE_KEYBOARD_KEY]
             )
 
             message = await bot.send_message(
@@ -52,12 +50,12 @@ async def cancel_to_main_menu_from_chat_gpt_menu(message: types.Message, state: 
                 reply_markup=chat_gpt_return_to_main_menu_ikb()
             )
             # Here it would be possible not to remember the last inline keyboard id because in the
-            # confirm_chat_gpt_cancel_to_main_menu, we will not use data['message_id_last_chat_gpt_inline_keyboard'],
+            # confirm_chat_gpt_cancel_to_main_menu, we will not use data[LAST_CHAT_GPT_INLINE_KEYBOARD_KEY],
             # but we will use callback.message.message_id, but we will need to store this last inline keyboard id
             # so that when the user calls the /start command in the confirm_clear_chat_gpt inline keyboard, we have
             # access to it to delete it, since the command /start displays a welcome message and
             # takes us to the main menu. Check command /start in handlers/users/commands/start.
-            data['message_id_last_chat_gpt_inline_keyboard'] = message.message_id
+            data[LAST_CHAT_GPT_INLINE_KEYBOARD_KEY] = message.message_id
 
         await ChatGptMenuStatesGroup.chat_gpt_confirm_cancel_to_main_menu.set()
     else:
@@ -66,7 +64,7 @@ async def cancel_to_main_menu_from_chat_gpt_menu(message: types.Message, state: 
         flag = False
 
         async with state.proxy() as data:
-            if data['count_chat_gpt_messages']:
+            if data[COUNT_CHAT_GPT_MESSAGES_KEY]:
                 flag = True
                 await bot.send_message(
                     chat_id=chat_id,

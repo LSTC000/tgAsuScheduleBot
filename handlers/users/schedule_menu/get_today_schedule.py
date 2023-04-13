@@ -1,5 +1,15 @@
 from data.config import STUDENT_TARGET, LECTURER_TARGET, RATE_LIMIT_DICT, SCHEDULE_MESSAGE_KEY
 
+from data.memory_storage import (
+    TARGET_URL_KEY,
+    ALLEGED_TARGET_NAME_KEY,
+    TARGET_DATE_QUERY_URL_CODE_KEY,
+    TODAY_TARGET_DATE_QUERY_URL_CODE_KEY,
+    TOMORROW_TARGET_DATE_QUERY_URL_CODE_KEY,
+    SCHEDULE_INLINE_KEYBOARDS_KEY,
+    INLINE_CALENDAR_KEY
+)
+
 from data.messages import VOICE_CONVERT_ERROR_MESSAGE, CALLBACK_DATA_KEY_ERROR_MESSAGE
 
 from functions import get_daily_schedule, voice_to_text_convert
@@ -38,7 +48,7 @@ async def get_today_schedule(message: types.Message, state: FSMContext) -> None:
         async with state.proxy() as data:
             if alleged_target_name is not None:
                 try:
-                    if data['target'] == STUDENT_TARGET:
+                    if data[TARGET] == STUDENT_TARGET:
                         alleged_target_name = await text_to_student_group_convert(text=alleged_target_name)
                     else:
                         if len(alleged_target_name.split()) == 1:
@@ -68,8 +78,8 @@ async def get_today_schedule(message: types.Message, state: FSMContext) -> None:
         try:
             async with state.proxy() as data:
                 # Hiding all the schedule inline keyboards from the user for the last target if there are any.
-                if data['message_id_last_schedule_inline_keyboards']:
-                    for message_id in data['message_id_last_schedule_inline_keyboards']:
+                if data[SCHEDULE_INLINE_KEYBOARDS_KEY]:
+                    for message_id in data[SCHEDULE_INLINE_KEYBOARDS_KEY]:
                         try:
                             await bot.edit_message_reply_markup(
                                 chat_id=user_id,
@@ -78,36 +88,36 @@ async def get_today_schedule(message: types.Message, state: FSMContext) -> None:
                             )
                         except MessageNotModified:
                             pass
-                    data['message_id_last_schedule_inline_keyboards'].clear()
+                    data[SCHEDULE_INLINE_KEYBOARDS_KEY].clear()
                 # Delete the last calendar inline keyboard if there is one.
-                if data['calendar_message_id'] is not None:
+                if data[INLINE_CALENDAR_KEY] is not None:
                     try:
                         await bot.delete_message(
                             chat_id=user_id,
-                            message_id=data['calendar_message_id']
+                            message_id=data[INLINE_CALENDAR_KEY]
                         )
                     except MessageToDeleteNotFound:
                         pass
-                    data['calendar_message_id'] = None
+                    data[INLINE_CALENDAR_KEY] = None
 
                 '''Create variables in the user memory storage'''
                 # target_url: Url to the weekly target schedule. From it you can get an url to the schedule
                 # of a certain day, if you add to its end DATE_QUERY_URL from data/urls/urls.
                 # Until we called the function get_daily_schedule equals None.
-                data['target_url'] = None
+                data[TARGET_URL_KEY] = None
                 # alleged_target_name: This is the alleged name of the target because at the beginning we cannot say
                 # the exact name of the target, since the user can enter an incomplete name of the target and
                 # then the bot will offer him a choice on the inline keyboard.
-                data['alleged_target_name'] = alleged_target_name
+                data[ALLEGED_TARGET_NAME_KEY] = alleged_target_name
                 # today_target_date_query_url_code: Today date in format %Y%m%d without separation.
-                data['today_target_date_query_url_code'] = today_target_date_query_url_code
+                data[TODAY_TARGET_DATE_QUERY_URL_CODE_KEY] = today_target_date_query_url_code
                 # tomorrow_target_date_query_url_code: Tomorrow date in format %Y%m%d without separation.
-                data['tomorrow_target_date_query_url_code'] = tomorrow_target_date_query_url_code
+                data[TOMORROW_TARGET_DATE_QUERY_URL_CODE_KEY] = tomorrow_target_date_query_url_code
                 # target_date_query_url_code: Url code for finding a schedule for today, tomorrow or a calendar
                 # schedule. We don't use for finding schedules today_target_date_query_url_code or
                 # tomorrow_target_date_query_url_code because these variables are only needed to store today and
                 # tomorrow date.
-                data['target_date_query_url_code'] = data['today_target_date_query_url_code']
+                data[TARGET_DATE_QUERY_URL_CODE_KEY] = today_target_date_query_url_code
 
             # Get daily schedule: check functions/get_daily_schedule.
             # The schedule_cache check is in this function.

@@ -1,5 +1,7 @@
 from data.callbacks import CALLBACK_DATA_GET_TOMORROW_SCHEDULE
 
+from data.memory_storage import TARGET_DATE_QUERY_URL_CODE_KEY, TOMORROW_TARGET_DATE_QUERY_URL_CODE_KEY
+
 from data.config import SCHEDULE_INLINE_KEYBOARD_KEY, RATE_LIMIT_DICT
 
 from data.messages import CALLBACK_DATA_KEY_ERROR_MESSAGE
@@ -25,7 +27,7 @@ async def get_tomorrow_schedule(callback: types.CallbackQuery, state: FSMContext
     try:
         # Check this data variables in handlers/users/schedule_menu/get_today_schedule.
         async with state.proxy() as data:
-            data['target_date_query_url_code'] = data['tomorrow_target_date_query_url_code']
+            data[TARGET_DATE_QUERY_URL_CODE_KEY] = data[TOMORROW_TARGET_DATE_QUERY_URL_CODE_KEY]
         # Get daily schedule: check functions/get_daily_schedule.
         await get_daily_schedule(
             chat_id=callback.from_user.id,
