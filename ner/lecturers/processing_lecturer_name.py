@@ -1,9 +1,9 @@
 def processing_lecturer_name(lecturer_name: str) -> str:
     '''
     :param lecturer_name: The name of the lecturer.
-        Example: 'Козлов Денис Юрьевич'
-    :return: The correct name of the lecturer for the request
-        Example: 'Козлов Д.Ю.'
+        Example: 'Козлов Денис Юрьевич'.
+    :return: The correct name of the lecturer for the request.
+        Example: 'Козлов Д.Ю.'.
     '''
 
     split_lecturer_name = lecturer_name.split()

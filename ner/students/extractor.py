@@ -8,11 +8,11 @@ class NumberExtractor(Extractor):
 
     def replace(self, text):
         """
-        Replacing numbers in the text without grouping them
+        Replacing numbers in the text without grouping them.
         Arguments:
-            text: source text
+            text: source text.
         Result:
-            new_text: text with replaced numbers
+            new_text: text with replaced numbers.
         """
         if text:
             new_text = ""

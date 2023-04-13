@@ -1,1 +1,1 @@
-from .urls import *
+from .other_urls import *

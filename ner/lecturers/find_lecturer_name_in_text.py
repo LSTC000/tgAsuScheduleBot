@@ -20,21 +20,20 @@ from natasha import (
 )
 
 
-async def find_lecturer_name_in_text(text: str, target: str, only_last_name: bool) -> Union[None, str]:
+async def find_lecturer_name_in_text(text: str, only_last_name: bool) -> Union[None, str]:
     '''
     :param text: The user voice request converted to text.
-        Example: 'найди мне козлова дениса юрьевича'
-    :param target: LECTURER_TARGET from data/config/parser/config
+        Example: 'найди мне козлова дениса юрьевича'.
     :param only_last_name: If True then we find the most similar lecturer from the LECTURERS_NAMES, else we follow
-        the algorithm for searching for the lecturer last name, first name and patronymic
+        the algorithm for searching for the lecturer last name, first name and patronymic.
     :return:
     Str - The correct name of the lecturer for the request.
-        Example: 'Козлов Д.Ю.'
-    None - If the user did not enter the lecturer last name
+        Example: 'Козлов Д.Ю.'.
+    None - If the user did not enter the lecturer last name.
     '''
 
     key_cache = text
-    # Checking for a request in the voice_cache
+    # Checking for a request in the voice_cache.
     if key_cache in voice_cache:
         return voice_cache[key_cache]
 
@@ -49,14 +48,14 @@ async def find_lecturer_name_in_text(text: str, target: str, only_last_name: boo
         voice_cache[key_cache] = None
         return None
 
-    # Translate the text into the nominative case
+    # Translate the text into the nominative case.
     text = nouns_and_nominative_case(text=text)
 
     if text is None:
         voice_cache[key_cache] = text
         return text
 
-    # Translate the text into the upper case
+    # Translate the text into the upper case.
     text = first_letter_upper_case(text=text)
 
     segmenter = Segmenter()
@@ -79,9 +78,9 @@ async def find_lecturer_name_in_text(text: str, target: str, only_last_name: boo
         if span.type == PER:
             lecturer_name_keys.append(span.normal)
             span.extract_fact(names_extractor)
-    # The keys in the fact_dict are the elements from the lecturer_name_keys
+    # The keys in the fact_dict are the elements from the lecturer_name_keys.
     fact_dict = {_.normal: _.fact.as_dict for _ in doc.spans if _.fact}
-    # The user can enter several lecturers but only the first one will be taken
+    # The user can enter several lecturers but only the first one will be taken.
     if len(lecturer_name_keys):
         for key in lecturer_name_keys:
             if 'last' in fact_dict[key]:

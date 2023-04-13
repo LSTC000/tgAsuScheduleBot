@@ -9,12 +9,12 @@ from loader import bot
 
 async def voice_to_text_convert(user_id: int, file_id: str, stt) -> Union[str, None]:
     '''
-    :param user_id: Telegram user id
-    :param file_id: Telegram voice file id
+    :param user_id: Telegram user id.
+    :param file_id: Telegram voice file id.
     :param stt: Stt model from loader:
-        schedule_stt if you want to know the schedule
-        chat_gpt_stt if you want to talk to Chat GPT
-    :return: Text if the voice is recognized else None
+        schedule_stt if you want to know the schedule,
+        chat_gpt_stt if you want to talk to Chat GPT.
+    :return: Text if the voice is recognized else None.
     '''
 
     massage = await bot.send_message(chat_id=user_id, text=START_VOICE_TO_TEXT_CONVERT_MESSAGE)
@@ -32,15 +32,9 @@ async def voice_to_text_convert(user_id: int, file_id: str, stt) -> Union[str, N
 
     os.remove(file_name)
 
-    if not text:
-        await bot.delete_message(
-            chat_id=user_id,
-            message_id=massage.message_id
-        )
-        return None
-    else:
-        await bot.delete_message(
-            chat_id=user_id,
-            message_id=massage.message_id
-        )
-        return text
+    await bot.delete_message(
+        chat_id=user_id,
+        message_id=massage.message_id
+    )
+
+    return text if text else None

@@ -2,16 +2,17 @@ import json
 from typing import Union, List, Tuple
 from datetime import datetime
 
-from data.config import HEADERS
-from data.config import STUDENT_TARGET
-from data.config import STUDENT_TABLE_HEADERS
-from data.config import LECTURER_TABLE_HEADERS
-from data.config import JSON_TOKEN
+from data.config import (
+    REQUEST_HEADERS,
+    STUDENT_TARGET,
+    STUDENT_TABLE_HEADERS,
+    LECTURER_TABLE_HEADERS,
+    JSON_TOKEN
+)
+
+from errors import GET_WEEKLY_SCHEDULE_LIST_RESPONSE_OR_JSON_ERROR_CODE, GET_WEEKLY_SCHEDULE_LIST_NONE_SCHEDULE_ERROR_CODE
 
 from data.urls import JSON_WEEKLY_SCHEDULE_URL, FREE_ROOMS_URL_DICT
-
-from errors import GET_WEEKLY_SCHEDULE_LIST_RESPONSE_OR_JSON_ERROR_CODE
-from errors import GET_WEEKLY_SCHEDULE_LIST_NONE_SCHEDULE_ERROR_CODE
 
 import httpx
 
@@ -23,22 +24,22 @@ async def get_weekly_schedule_list(
         table_headers: list
 ) -> Union[int, List[dict]]:
     '''
-    :param chat_id: Telegram user chat_id
-    :param target: STUDENT_TARGET or LECTURER_TARGET from data/config/parser/config
+    :param chat_id: Telegram user chat_id.
+    :param target: STUDENT_TARGET or LECTURER_TARGET from data/config/parser/config.
     :param url: Url to the weekly target schedule.
-        Example: https://www.asu.ru/timetable/students/21/2129440242/
-    :param table_headers: STUDENT_TABLE_HEADERS or LECTURER_TABLE_HEADERS from data/config/parsers/config
+        Example: https://www.asu.ru/timetable/students/21/2129440242/.
+    :param table_headers: STUDENT_TABLE_HEADERS or LECTURER_TABLE_HEADERS from data/config/parsers/config.
     :return:
-        Int - If any error get_weekly_schedule_list was caused
+        Int - If any error get_weekly_schedule_list was caused.
         List - Contains a dictionary for each day in the weekly schedule, in which the key - the name of the table
-            header and the value - the header data
+            header and the value - the header data.
     '''
 
     url = JSON_WEEKLY_SCHEDULE_URL.format(url, JSON_TOKEN)
 
     try:
         async with httpx.AsyncClient() as client:
-            response = await client.get(url=url, headers=HEADERS, params={'chat_id': chat_id})
+            response = await client.get(url=url, headers=REQUEST_HEADERS, params={'chat_id': chat_id})
     except (httpx.HTTPError, httpx.RequestError, httpx.TimeoutException):
         return GET_WEEKLY_SCHEDULE_LIST_RESPONSE_OR_JSON_ERROR_CODE
 
@@ -48,7 +49,7 @@ async def get_weekly_schedule_list(
 
         rows = schedule_data.get('rows')
 
-        # Checking whether there are classes for this week or not
+        # Checking whether there are classes for this week or not.
         if not rows:
             return GET_WEEKLY_SCHEDULE_LIST_NONE_SCHEDULE_ERROR_CODE
 
@@ -84,18 +85,18 @@ async def get_weekly_schedule_list(
                         table_headers[5]: [],
                         table_headers[6]: []
                     }
-                # Add lesson num
+                # Add lesson num.
                 try:
                     schedule[table_headers[1]].append(record.get('lessonNum'))
                 except KeyError:
                     schedule[table_headers[1]].append('')
-                # Add lesson time
+                # Add lesson time.
                 try:
                     schedule[table_headers[2]].append(
                         f"{record.get('lessonTimeStart')} - {record.get('lessonTimeEnd')}")
                 except KeyError:
                     schedule[table_headers[2]].append('')
-                # Add lesson subject
+                # Add lesson subject.
                 try:
                     subject = record.get('lessonSubject')
                     try:
@@ -109,7 +110,7 @@ async def get_weekly_schedule_list(
                         schedule[table_headers[3]].append(subject.get('subjectTitle'))
                 except KeyError:
                     schedule[table_headers[3]].append('')
-                # Add lesson lecturers
+                # Add lesson lecturers.
                 try:
                     lecturers = record.get('lessonLecturers')
                     lecturers_list = []
@@ -120,13 +121,13 @@ async def get_weekly_schedule_list(
                     schedule[table_headers[4]].append(', '.join(lecturers_list))
                 except KeyError:
                     schedule[table_headers[4]].append('')
-                # Add lesson room
+                # Add lesson room.
                 try:
                     room = record.get('lessonRoom')
                     schedule[table_headers[5]].append(f"{room.get('roomTitle')} {room.get('roomBuildingCode')}")
                 except KeyError:
                     schedule[table_headers[5]].append('')
-                # Add url to free rooms
+                # Add url to free rooms.
                 try:
                     room = record.get('lessonRoom')
                     building_code = room.get('roomBuildingCode').lower()
@@ -139,7 +140,7 @@ async def get_weekly_schedule_list(
                         schedule[table_headers[6]].append('')
                 except KeyError:
                     schedule[table_headers[6]].append('')
-            # For the last day of the week
+            # For the last day of the week.
             schedule_list.append(schedule)
 
             return schedule_list
@@ -172,18 +173,18 @@ async def get_weekly_schedule_list(
                         table_headers[5]: [],
                         table_headers[6]: []
                     }
-                # Add lesson num
+                # Add lesson num.
                 try:
                     schedule[table_headers[1]].append(record.get('lessonNum'))
                 except KeyError:
                     schedule[table_headers[1]].append('')
-                # Add lesson time
+                # Add lesson time.
                 try:
                     schedule[table_headers[2]].append(
                         f"{record.get('lessonTimeStart')} - {record.get('lessonTimeEnd')}")
                 except KeyError:
                     schedule[table_headers[2]].append('')
-                # Add lesson subject
+                # Add lesson subject.
                 try:
                     subject = record.get('lessonSubject')
                     try:
@@ -193,7 +194,7 @@ async def get_weekly_schedule_list(
                         schedule[table_headers[3]].append(subject.get('subjectTitle'))
                 except KeyError:
                     schedule[table_headers[3]].append('')
-                # Add lesson groups
+                # Add lesson groups.
                 try:
                     groups = record.get('lessonGroups')
                     groups_list = []
@@ -204,13 +205,13 @@ async def get_weekly_schedule_list(
                     schedule[table_headers[4]].append(', '.join(groups_list))
                 except KeyError:
                     schedule[table_headers[4]].append('')
-                # Add lesson room
+                # Add lesson room.
                 try:
                     room = record.get('lessonRoom')
                     schedule[table_headers[5]].append(f"{room.get('roomTitle')} {room.get('roomBuildingCode')}")
                 except KeyError:
                     schedule[table_headers[5]].append('')
-                # Add url to free rooms
+                # Add url to free rooms.
                 try:
                     room = record.get('lessonRoom')
                     building_code = room.get('roomBuildingCode').lower()
@@ -223,7 +224,7 @@ async def get_weekly_schedule_list(
                         schedule[table_headers[6]].append('')
                 except KeyError:
                     schedule[table_headers[6]].append('')
-            # For the last day of the week
+            # For the last day of the week.
             schedule_list.append(schedule)
 
             return schedule_list
@@ -238,18 +239,18 @@ async def get_weekly_schedule_data(
         target_table_headers: list
 ) -> Union[int, str, Tuple[List[dict], str, list]]:
     '''
-    :param chat_id: Telegram user chat_id
-    :param target: STUDENT_TARGET or LECTURER_TARGET from data/config/parser/config
+    :param chat_id: Telegram user chat_id.
+    :param target: STUDENT_TARGET or LECTURER_TARGET from data/config/parser/config.
     :param target_weekly_schedule_url: Url to the weekly target schedule.
-        Example: https://www.asu.ru/timetable/students/21/2129440242/
-    :param target_table_headers: STUDENT_TABLE_HEADERS or LECTURER_TABLE_HEADERS from data/config/parsers/config
+        Example: https://www.asu.ru/timetable/students/21/2129440242/.
+    :param target_table_headers: STUDENT_TABLE_HEADERS or LECTURER_TABLE_HEADERS from data/config/parsers/config.
     :return:
         Int - if any error was caused other than none schedule. Contains an error code that will be processed in
-            processing_parser_errors function from utils/processing_parser_errors
+            processing_parser_errors function from utils/processing_parser_errors.
         Str - if the none schedule error was caused. Сontains the url to weekly schedule. This error is processed in
-            processing_parser_none_schedule_error function from utils/processing_parser_none_schedule_error
+            processing_parser_none_schedule_error function from utils/processing_parser_none_schedule_error.
         Tuple - Contains a list with data for each day in the weekly schedule, a link to the weekly schedule and
-            the names of columns to create schedule report
+            the names of columns to create schedule report.
     '''
 
     weekly_schedule_list = await get_weekly_schedule_list(
@@ -258,9 +259,9 @@ async def get_weekly_schedule_data(
         url=target_weekly_schedule_url,
         table_headers=target_table_headers
     )
-    # If any error was caused in the get_weekly_schedule_list function
+    # If any error was caused in the get_weekly_schedule_list function.
     if isinstance(weekly_schedule_list, int):
-        # If none schedule error was caused in the get_weekly_schedule_list function
+        # If none schedule error was caused in the get_weekly_schedule_list function.
         if weekly_schedule_list == GET_WEEKLY_SCHEDULE_LIST_NONE_SCHEDULE_ERROR_CODE:
             return target_weekly_schedule_url
 
@@ -275,17 +276,17 @@ async def weekly_schedule(
         target_weekly_schedule_url: str
 ) -> Union[int, str, Tuple[List[dict], str, list]]:
     '''
-    :param chat_id: Telegram user chat_id
-    :param target: STUDENT_TARGET or LECTURER_TARGET from data/config/parser/config
+    :param chat_id: Telegram user chat_id.
+    :param target: STUDENT_TARGET or LECTURER_TARGET from data/config/parser/config.
     :param target_weekly_schedule_url: Url to the weekly target schedule.
-        Example: https://www.asu.ru/timetable/students/21/2129440242/
+        Example: https://www.asu.ru/timetable/students/21/2129440242/.
     :return:
         Int - if any error was caused other than none schedule. Contains an error code that will be processed in
-            processing_parser_errors function from utils/processing_parser_errors
+            processing_parser_errors function from utils/processing_parser_errors.
         Str - if the none schedule error was caused. Сontains the url to weekly schedule. This error is processed in
-            processing_parser_none_schedule_error function from utils/processing_parser_none_schedule_error
+            processing_parser_none_schedule_error function from utils/processing_parser_none_schedule_error.
         Tuple - Contains a list with data for each day in the weekly schedule, a link to the weekly schedule and
-            the names of columns to create schedule report
+            the names of columns to create schedule report.
     '''
 
     if target == STUDENT_TARGET:

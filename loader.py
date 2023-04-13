@@ -1,14 +1,18 @@
 import logging
 
-from data.config import BOT_TOKEN
-from data.config import PARSE_MODE
-from data.config import DISABLE_WEB_PAGE_PREVIEW
-from data.config import STT_LOW_MODEL_PATH
-from data.config import STT_HIGH_MODEL_PATH
-from data.config import SAMPLE_RATE
-from data.config import FFMPEG_PATH
-from data.config import SCHEDULE_MAXSIZE, VOICE_MAXSIZE
-from data.config import SCHEDULE_TTL, VOICE_TTL
+from data.config import (
+    BOT_TOKEN,
+    PARSE_MODE,
+    DISABLE_WEB_PAGE_PREVIEW,
+    STT_LOW_MODEL_PATH,
+    STT_HIGH_MODEL_PATH,
+    SAMPLE_RATE,
+    FFMPEG_PATH,
+    SCHEDULE_MAXSIZE,
+    VOICE_MAXSIZE,
+    SCHEDULE_TTL,
+    VOICE_TTL
+)
 
 from stt import STT
 

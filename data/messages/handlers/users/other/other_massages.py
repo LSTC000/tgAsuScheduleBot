@@ -1,12 +1,12 @@
-# Start find messages
+# Start find messages.
 START_FIND_WEEKLY_SCHEDULE_MESSAGE = '⏳ Пожалуйста, немного подождите...'
 START_FIND_CHAT_GPT_MESSAGE = '⏳ Пожалуйста, немного подождите...'
 
-# Calendar messages
+# Calendar messages.
 CALENDAR_CHOICE_DATE_MESSAGE = '📌 Выберите дату'
 CALENDAR_SELECTED_DATE_MESSAGE = '📌 Расписание на <u>{}</u>'
 
-# Asu housing location message
+# Asu housing location message.
 ASU_BUILDINGS_LOCATION_MESSAGE = '📌 Корпус «М» - <a href="https://yandex.ru/maps/org/altayskiy_gosudarstvenny_universitet/79582866169/?ll=83.774817%2C53.347715&z=17" ' \
                               'title="корпус"><b>пр-т Ленина, 61A</b></a>.\n\n' \
                               '📌 Корпус «Л» - <a href="https://yandex.ru/maps/197/barnaul/house/prospekt_lenina_61/bEoYcQBmSEUFQFtpfX91dnlkZA==/?ll=83.776102%2C53.347570&z=17.1" ' \
@@ -30,7 +30,7 @@ ASU_BUILDINGS_LOCATION_MESSAGE = '📌 Корпус «М» - <a href="https://ya
                               '📌 Лыжная база - <a href="https://yandex.ru/maps/org/lyzhnaya_baza_altgu/1206451800/?ll=83.759788%2C53.307111&z=17.04" ' \
                               'title="корпус"><b>ул. Ляпидевского, 6А</b></a>.\n\n'
 
-# Chat gpt menu messages
+# Chat gpt menu messages.
 ENTER_CHAT_GPT_QUESTION_MESSAGE = '🤔 Что вы хотите узнать у Chat GPT?\n\n' \
                                   '‼️ Вы можете отправлять сообщения раз в 5 секунд. '
 
@@ -50,7 +50,7 @@ LIMIT_CHAT_GPT_MESSAGES_MESSAGE = '‼️ Вы привысили лимит в 
 EMPTY_CHAT_GPT_MESSAGES_MESSAGE = '‼️ Ваш диалог с Chat GPT уже пуст.\n\n' \
                                   'Напишите какое-либо сообщение, чтобы воспользоваться данной функцией. 😉'
 
-# Schedule menu messages
+# Schedule menu messages.
 CHOICE_SCHEDULE_TARGET_MESSAGE = '🔍 Выберите расписание'
 
 CHOICE_ALLEGED_STUDENT_TARGET_MESSAGE = "🔍 Выберите группу"

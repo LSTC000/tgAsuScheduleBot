@@ -4,7 +4,7 @@ import datetime
 def get_date_query_url_codes() -> tuple:
     '''
     :return: Today and tomorrow query url code.
-        Example: today: '20230326', tomorrow: '20230327'
+        Example: today: '20230326', tomorrow: '20230327'.
     '''
 
     today_date = datetime.date.today()

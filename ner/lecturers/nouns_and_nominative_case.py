@@ -6,11 +6,11 @@ import pymorphy2
 def nouns_and_nominative_case(text: str) -> Union[str, None]:
     '''
     :param text: Some text.
-        Example: 'найди мне козлова дениса юрьевича'
+        Example: 'найди мне козлова дениса юрьевича'.
     :return:
     Str - Nouns in the text.
-        Example: 'козлова дениса юрьевича', 'masc'
-    None - If there are no nouns in the text
+        Example: 'козлова дениса юрьевича', 'masc'.
+    None - If there are no nouns in the text.
     '''
 
     morph = pymorphy2.MorphAnalyzer()

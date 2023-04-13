@@ -3,7 +3,7 @@ __all__ = [
     'set_default_commands',
     'register_users_cancels',
     'register_users_main_menu',
-    'register_users_text_out_of_state',
+    'register_users_invalid_messages',
     'register_users_schedule_menu',
     'register_users_chat_gpt_menu'
 ]
@@ -14,7 +14,7 @@ from .users import (
     set_default_commands,
     register_users_cancels,
     register_users_main_menu,
-    register_users_text_out_of_state,
+    register_users_invalid_messages,
     register_users_schedule_menu,
     register_users_chat_gpt_menu
 )

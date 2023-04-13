@@ -1,1 +1,1 @@
-from .connect_error_messages import *
+from .chat_gpt_error_messages import *

@@ -1,5 +1,4 @@
-from data.messages import START_SHORT_COMMAND_MESSAGE
-from data.messages import HELP_SHORT_COMMAND_MESSAGE
+from data.messages import START_SHORT_COMMAND_MESSAGE, HELP_SHORT_COMMAND_MESSAGE
 
 from aiogram import Bot
 from aiogram.types import BotCommand

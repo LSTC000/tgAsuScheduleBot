@@ -1,8 +1,7 @@
 import json
 import time
 
-from data.config import HEADERS
-from data.config import JSON_TOKEN
+from data.config import REQUEST_HEADERS, JSON_TOKEN
 
 import requests
 
@@ -13,7 +12,7 @@ lecturers_url = 'https://www.asu.ru/timetable/lecturers/'
 
 lecturer_list = []
 
-response = requests.get(url=json_url.format(lecturers_url, JSON_TOKEN), headers=HEADERS)
+response = requests.get(url=json_url.format(lecturers_url, JSON_TOKEN), headers=REQUEST_HEADERS)
 time.sleep(1)
 
 data = response.json()
@@ -24,7 +23,7 @@ faculties_records = faculties['records']
 for faculties_record in faculties_records:
     print(f'[-----Faculty: {faculties_record["facultyTitle"]}-----]')
     faculty_url = lecturers_url + str(faculties_record['facultyId'])
-    response = requests.get(url=json_url.format(faculty_url, JSON_TOKEN), headers=HEADERS)
+    response = requests.get(url=json_url.format(faculty_url, JSON_TOKEN), headers=REQUEST_HEADERS)
     time.sleep(1)
 
     data = response.json()
@@ -35,7 +34,7 @@ for faculties_record in faculties_records:
     for chairs_record in chairs_records:
         print(f'[Chair: {chairs_record["chairTitle"]}]')
         chair_url = faculty_url + '/' + str(chairs_record['chairId'])
-        response = requests.get(url=json_url.format(chair_url, JSON_TOKEN), headers=HEADERS)
+        response = requests.get(url=json_url.format(chair_url, JSON_TOKEN), headers=REQUEST_HEADERS)
         time.sleep(1)
 
         data = response.json()

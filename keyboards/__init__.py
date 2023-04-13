@@ -1,5 +1,5 @@
 __all__ = [
-    'chat_gpt_clear_history_message_ikb',
+    'clear_chat_gpt_messages_ikb',
     'chat_gpt_return_to_main_menu_ikb',
     'get_asu_telegram_news_ikb',
     'get_alleged_target_name_ikb',
@@ -13,7 +13,7 @@ __all__ = [
 
 
 from .inline_keyboards import (
-    chat_gpt_clear_history_message_ikb,
+    clear_chat_gpt_messages_ikb,
     chat_gpt_return_to_main_menu_ikb,
     get_asu_telegram_news_ikb,
     get_alleged_target_name_ikb,

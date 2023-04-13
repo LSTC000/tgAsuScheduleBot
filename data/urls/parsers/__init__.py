@@ -1,1 +1,1 @@
-from .urls import *
+from .parsers_urls import *

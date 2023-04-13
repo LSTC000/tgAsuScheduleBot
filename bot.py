@@ -1,7 +1,6 @@
 import logging
 
-from data.config import SKIP_UPDATES
-from data.config import ADMIN
+from data.config import SKIP_UPDATES, ADMIN
 
 from loader import dp, bot, logger
 
@@ -9,25 +8,27 @@ from database import startup_setup, shutdown_setup
 
 from middlewares import ThrottlingAndDatabaseMiddleware
 
-from handlers import register_users_commands
-from handlers import set_default_commands
-from handlers import register_users_cancels
-from handlers import register_users_main_menu
-from handlers import register_users_text_out_of_state
-from handlers import register_users_schedule_menu
-from handlers import register_users_chat_gpt_menu
+from handlers import (
+    register_users_commands,
+    set_default_commands,
+    register_users_cancels,
+    register_users_main_menu,
+    register_users_invalid_messages,
+    register_users_schedule_menu,
+    register_users_chat_gpt_menu
+)
 
 from aiogram import Bot, Dispatcher
 from aiogram.utils import executor
 
 
 def register_all_handlers(dispatcher: Dispatcher):
-    register_users_commands(dispatcher)
     register_users_cancels(dispatcher)
     register_users_main_menu(dispatcher)
     register_users_schedule_menu(dispatcher)
     register_users_chat_gpt_menu(dispatcher)
-    register_users_text_out_of_state(dispatcher)
+    register_users_invalid_messages(dispatcher)
+    register_users_commands(dispatcher)
 
 
 def register_all_middlewares(dispatcher: Dispatcher):

@@ -3,40 +3,50 @@ from typing import Union, List, Tuple
 from datetime import datetime
 from urllib.parse import quote
 
-from data.config import HEADERS
-from data.config import STUDENT_TARGET
-from data.config import STUDENT_TABLE_HEADERS, LECTURER_TABLE_HEADERS
-from data.config import COUNT_SHOW_ALLEGED_TARGETS_THRESHOLD
-from data.config import JSON_TOKEN
+from data.config import (
+    REQUEST_HEADERS,
+    STUDENT_TARGET,
+    STUDENT_TABLE_HEADERS,
+    LECTURER_TABLE_HEADERS,
+    COUNT_SHOW_ALLEGED_TARGETS_THRESHOLD,
+    JSON_TOKEN
+)
 
-from errors import GET_ALLEGED_TARGETS_URLS_DICT_RESPONSE_OR_JSON_ERROR_CODE
-from errors import GET_ALLEGED_TARGETS_URLS_DICT_NONE_TARGET_NAME_ERROR_CODE
-from errors import GET_ALLEGED_TARGETS_URLS_DICT_COUNT_SHOW_ALLEGED_TARGET_NAMES_THRESHOLD_ERROR_CODE
-from errors import GET_DAILY_SCHEDULE_DICT_RESPONSE_OR_JSON_ERROR_CODE
-from errors import GET_DAILY_SCHEDULE_DICT_NONE_SCHEDULE_ERROR_CODE
+from errors import (
+    GET_ALLEGED_TARGETS_URLS_DICT_RESPONSE_OR_JSON_ERROR_CODE,
+    GET_ALLEGED_TARGETS_URLS_DICT_NONE_TARGET_NAME_ERROR_CODE,
+    GET_ALLEGED_TARGETS_URLS_DICT_COUNT_SHOW_ALLEGED_TARGET_NAMES_THRESHOLD_ERROR_CODE,
+    GET_DAILY_SCHEDULE_DICT_RESPONSE_OR_JSON_ERROR_CODE,
+    GET_DAILY_SCHEDULE_DICT_NONE_SCHEDULE_ERROR_CODE
+)
 
-from data.urls import JSON_DATE_QUERY_URL
-from data.urls import STUDENTS_URL, LECTURERS_URL, FREE_ROOMS_URL_DICT
-from data.urls import STUDENTS_JSON_QUERY_URL, LECTURERS_JSON_QUERY_URL
+from data.urls import (
+    JSON_DATE_QUERY_URL,
+    STUDENTS_URL,
+    LECTURERS_URL,
+    JSON_STUDENTS_QUERY_URL,
+    JSON_LECTURERS_QUERY_URL,
+    FREE_ROOMS_URL_DICT
+)
 
 import httpx
 
 
 async def get_alleged_targets_urls_dict(chat_id: str, target: str, alleged_target_url: str) -> Union[int, dict]:
     '''
-    :param chat_id: Telegram user chat_id
-    :param target: STUDENT_TARGET or LECTURER_TARGET from data/config/parser/config
+    :param chat_id: Telegram user chat_id.
+    :param target: STUDENT_TARGET or LECTURER_TARGET from data/config/parser/config.
     :param alleged_target_url: Url to search for the alleged targets.
-        Example: https://www.asu.ru/timetable/search/students/?query=404
+        Example: https://www.asu.ru/timetable/search/students/?query=404.
     :return:
-        Int - If any error get_alleged_targets_urls_dict was caused
+        Int - If any error get_alleged_targets_urls_dict was caused.
         Dict - Contains the key - the full name of the alleged target and the value - an url to the weekly
-            target schedule
+            target schedule.
     '''
 
     try:
         async with httpx.AsyncClient() as client:
-            response = await client.get(url=alleged_target_url, headers=HEADERS, params={'chat_id': chat_id})
+            response = await client.get(url=alleged_target_url, headers=REQUEST_HEADERS, params={'chat_id': chat_id})
     except (httpx.HTTPError, httpx.RequestError, httpx.TimeoutException):
         return GET_ALLEGED_TARGETS_URLS_DICT_RESPONSE_OR_JSON_ERROR_CODE
 
@@ -46,10 +56,10 @@ async def get_alleged_targets_urls_dict(chat_id: str, target: str, alleged_targe
             groups_data = data.get('groups')
             rows = groups_data.get('rows')
 
-            # Checking for the number of matches found with the name of the alleged target
+            # Checking for the number of matches found with the name of the alleged target.
             if not rows:
                 return GET_ALLEGED_TARGETS_URLS_DICT_NONE_TARGET_NAME_ERROR_CODE
-            # Checking for an acceptable threshold for the number of possible alleged targets
+            # Checking for an acceptable threshold for the number of possible alleged targets.
             if rows > COUNT_SHOW_ALLEGED_TARGETS_THRESHOLD:
                 return GET_ALLEGED_TARGETS_URLS_DICT_COUNT_SHOW_ALLEGED_TARGET_NAMES_THRESHOLD_ERROR_CODE
 
@@ -64,10 +74,10 @@ async def get_alleged_targets_urls_dict(chat_id: str, target: str, alleged_targe
             lecturers_data = data.get('lecturers')
             rows = lecturers_data.get('rows')
 
-            # Checking for the number of matches found with the name of the alleged target
+            # Checking for the number of matches found with the name of the alleged target.
             if not rows:
                 return GET_ALLEGED_TARGETS_URLS_DICT_NONE_TARGET_NAME_ERROR_CODE
-            # Checking for an acceptable threshold for the number of possible alleged targets
+            # Checking for an acceptable threshold for the number of possible alleged targets.
             if rows > COUNT_SHOW_ALLEGED_TARGETS_THRESHOLD:
                 return GET_ALLEGED_TARGETS_URLS_DICT_COUNT_SHOW_ALLEGED_TARGET_NAMES_THRESHOLD_ERROR_CODE
 
@@ -95,24 +105,24 @@ async def get_daily_schedule_dict(
         table_headers: list
 ) -> Union[int, dict]:
     '''
-    :param chat_id: Telegram user chat_id
-    :param target: STUDENT_TARGET or LECTURER_TARGET from data/config/parser/config
+    :param chat_id: Telegram user chat_id.
+    :param target: STUDENT_TARGET or LECTURER_TARGET from data/config/parser/config.
     :param url: Url to the weekly target schedule.
-        Example: https://www.asu.ru/timetable/students/21/2129440242/
+        Example: https://www.asu.ru/timetable/students/21/2129440242/.
     :param date_query_url_code: Url code for finding a schedule for today.
-        Example: '20230326'
-    :param table_headers: STUDENT_TABLE_HEADERS or LECTURER_TABLE_HEADERS from data/config/parsers/config
+        Example: '20230326'.
+    :param table_headers: STUDENT_TABLE_HEADERS or LECTURER_TABLE_HEADERS from data/config/parsers/config.
     :return:
-        Int - If any error get_daily_schedule_dict was caused
-        Dict - Contains the key - the name of the table header and the value - the header data
+        Int - If any error get_daily_schedule_dict was caused.
+        Dict - Contains the key - the name of the table header and the value - the header data.
     '''
 
-    # Create an url to find the daily schedule
+    # Create an url to find the daily schedule.
     date_query_url = JSON_DATE_QUERY_URL.format(url, date_query_url_code, JSON_TOKEN)
 
     try:
         async with httpx.AsyncClient() as client:
-            response = await client.get(url=date_query_url, headers=HEADERS, params={'chat_id': chat_id})
+            response = await client.get(url=date_query_url, headers=REQUEST_HEADERS, params={'chat_id': chat_id})
     except (httpx.HTTPError, httpx.RequestError, httpx.TimeoutException):
         return GET_DAILY_SCHEDULE_DICT_RESPONSE_OR_JSON_ERROR_CODE
 
@@ -122,7 +132,7 @@ async def get_daily_schedule_dict(
 
         rows = schedule_data.get('rows')
 
-        # Checking whether there are classes today or not
+        # Checking whether there are classes today or not.
         if not rows:
             return GET_DAILY_SCHEDULE_DICT_NONE_SCHEDULE_ERROR_CODE
 
@@ -140,17 +150,17 @@ async def get_daily_schedule_dict(
             }
 
             for record in records:
-                # Add lesson num
+                # Add lesson num.
                 try:
                     schedule[table_headers[1]].append(record.get('lessonNum'))
                 except KeyError:
                     schedule[table_headers[1]].append('')
-                # Add lesson time
+                # Add lesson time.
                 try:
                     schedule[table_headers[2]].append(f"{record.get('lessonTimeStart')} - {record.get('lessonTimeEnd')}")
                 except KeyError:
                     schedule[table_headers[2]].append('')
-                # Add lesson subject
+                # Add lesson subject.
                 try:
                     subject = record.get('lessonSubject')
                     try:
@@ -164,7 +174,7 @@ async def get_daily_schedule_dict(
                         schedule[table_headers[3]].append(subject.get('subjectTitle'))
                 except KeyError:
                     schedule[table_headers[3]].append('')
-                # Add lesson lecturers
+                # Add lesson lecturers.
                 try:
                     lecturers = record.get('lessonLecturers')
                     lecturers_list = []
@@ -175,13 +185,13 @@ async def get_daily_schedule_dict(
                     schedule[table_headers[4]].append(', '.join(lecturers_list))
                 except KeyError:
                     schedule[table_headers[4]].append('')
-                # Add lesson room
+                # Add lesson room.
                 try:
                     room = record.get('lessonRoom')
                     schedule[table_headers[5]].append(f"{room.get('roomTitle')} {room.get('roomBuildingCode')}")
                 except KeyError:
                     schedule[table_headers[5]].append('')
-                # Add url to free rooms
+                # Add url to free rooms.
                 try:
                     room = record.get('lessonRoom')
                     building_code = room.get('roomBuildingCode').lower()
@@ -208,17 +218,17 @@ async def get_daily_schedule_dict(
             }
 
             for record in records:
-                # Add lesson num
+                # Add lesson num.
                 try:
                     schedule[table_headers[1]].append(record.get('lessonNum'))
                 except KeyError:
                     schedule[table_headers[1]].append('')
-                # Add lesson time
+                # Add lesson time.
                 try:
                     schedule[table_headers[2]].append(f"{record.get('lessonTimeStart')} - {record.get('lessonTimeEnd')}")
                 except KeyError:
                     schedule[table_headers[2]].append('')
-                # Add lesson subject
+                # Add lesson subject.
                 try:
                     subject = record.get('lessonSubject')
                     try:
@@ -228,7 +238,7 @@ async def get_daily_schedule_dict(
                         schedule[table_headers[3]].append(subject.get('subjectTitle'))
                 except KeyError:
                     schedule[table_headers[3]].append('')
-                # Add lesson groups
+                # Add lesson groups.
                 try:
                     groups = record.get('lessonGroups')
                     groups_list = []
@@ -239,13 +249,13 @@ async def get_daily_schedule_dict(
                     schedule[table_headers[4]].append(', '.join(groups_list))
                 except KeyError:
                     schedule[table_headers[4]].append('')
-                # Add lesson room
+                # Add lesson room.
                 try:
                     room = record.get('lessonRoom')
                     schedule[table_headers[5]].append(f"{room.get('roomTitle')} {room.get('roomBuildingCode')}")
                 except KeyError:
                     schedule[table_headers[5]].append('')
-                # Add url to free rooms
+                # Add url to free rooms.
                 try:
                     room = record.get('lessonRoom')
                     building_code = room.get('roomBuildingCode').lower()
@@ -274,38 +284,38 @@ async def get_daily_schedule_data(
         target_table_headers: list
 ) -> Union[int, List[str], dict, Tuple[dict, str, str, list]]:
     '''
-    :param chat_id: Telegram user chat_id
-    :param target: STUDENT_TARGET or LECTURER_TARGET from data/config/parser/config
+    :param chat_id: Telegram user chat_id.
+    :param target: STUDENT_TARGET or LECTURER_TARGET from data/config/parser/config.
     :param target_url: Url to the weekly target schedule. From it you can get an url to the schedule of a certain day,
         if you add to its end DATE_QUERY_URL from data/urls/urls.
         Until we called the get_daily_schedule_data function equals None.
         If any error from the get_alleged_targets_urls_dict function is called the target_url will remain equal to None.
-        Example: None or https://www.asu.ru/timetable/students/21/2129440242/
+        Example: None or https://www.asu.ru/timetable/students/21/2129440242/.
     :param alleged_target_name: This is the alleged name of the target because at the beginning we cannot say
         the exact name of the target, since the user can enter an incomplete name of the target and
         then the bot will offer him a choice on the inline keyboard.
-        Example: 'Дронов' or 'Мих'
+        Example: 'Дронов' or 'Мих'.
     :param target_date_query_url_code: Url code for finding a schedule for today.
-        Example: '20230326'
-    :param target_query_url: STUDENTS_JSON_QUERY_URL or LECTURERS_JSON_QUERY_URL from data/urls/urls
-    :param target_table_headers: STUDENT_TABLE_HEADERS or LECTURER_TABLE_HEADERS from data/config/parsers/config
+        Example: '20230326'.
+    :param target_query_url: JSON_STUDENTS_QUERY_URL or JSON_LECTURERS_QUERY_URL from data/urls/urls.
+    :param target_table_headers: STUDENT_TABLE_HEADERS or LECTURER_TABLE_HEADERS from data/config/parsers/config.
     :return:
         Int - if any error was caused other than none schedule. Contains an error code that will be processed in
-            processing_parser_errors function from utils/processing_parser_errors
+            processing_parser_errors function from utils/processing_parser_errors.
         List - if the none schedule error was caused. Сontains the full name of the target and an url to its weekly
             schedule, so that when we search for a schedule for tomorrow, for the current week or by calendar,
             we do not have to search for this information again. This error is processed in
-            processing_parser_none_schedule_error function from utils/processing_parser_none_schedule_error
+            processing_parser_none_schedule_error function from utils/processing_parser_none_schedule_error.
         Dict - Contains the key - the name of the alleged target and the value of the key - a link to the weekly
-            target schedule
+            target schedule.
         Tuple - Contains a dictionary with data about the daily schedule, the full name of the target, an url to the
-            weekly schedule of the target and the name of the schedule columns to create report schedule
+            weekly schedule of the target and the name of the schedule columns to create report schedule.
     '''
 
-    # If the url to the weekly target schedule is already known, then you don't have to search for it again
+    # If the url to the weekly target schedule is already known, then you don't have to search for it again.
     if target_url is None:
-        # Create an url to search for the alleged targets
-        # The line below is in order to get the URL-encoded string for the alleged target name
+        # Create an url to search for the alleged targets.
+        # The line below is in order to get the URL-encoded string for the alleged target name.
         alleged_target_name_encoded = quote(alleged_target_name, safe='+:/?=&')
         target_query_url = target_query_url.format(alleged_target_name_encoded, JSON_TOKEN)
 
@@ -314,13 +324,13 @@ async def get_daily_schedule_data(
             target=target,
             alleged_target_url=target_query_url
         )
-        # If any error was caused in the get_alleged_targets_urls_dict function
+        # If any error was caused in the get_alleged_targets_urls_dict function.
         if isinstance(alleged_targets_urls_dict, int):
             return alleged_targets_urls_dict
-        # If we received from get_alleged_targets_urls_dict more than one alleged target
+        # If we received from get_alleged_targets_urls_dict more than one alleged target.
         if len(alleged_targets_urls_dict) > 1:
             return alleged_targets_urls_dict
-        # Else get the key and an url to the weekly schedule
+        # Else get the key and an url to the weekly schedule.
         for key in alleged_targets_urls_dict.keys():
             target_name = key
             target_url = alleged_targets_urls_dict[key]
@@ -334,9 +344,9 @@ async def get_daily_schedule_data(
         date_query_url_code=target_date_query_url_code,
         table_headers=target_table_headers
     )
-    # If any error was caused in the get_daily_schedule_dict function
+    # If any error was caused in the get_daily_schedule_dict function.
     if isinstance(daily_schedule_dict, int):
-        # If none schedule error was caused in the get_daily_schedule_dict function
+        # If none schedule error was caused in the get_daily_schedule_dict function.
         if daily_schedule_dict == GET_DAILY_SCHEDULE_DICT_NONE_SCHEDULE_ERROR_CODE:
             return [target_name, target_url]
 
@@ -353,29 +363,30 @@ async def daily_schedule(
         target_date_query_url_code: str
 ) -> Union[int, List[str], dict, Tuple[dict, str, str, list]]:
     '''
-    :param chat_id: Telegram user chat_id
-    :param target: STUDENT_TARGET or LECTURER_TARGET from data/config/parser/config
+    :param chat_id: Telegram user chat_id.
+    :param target: STUDENT_TARGET or LECTURER_TARGET from data/config/parser/config.
     :param target_url: Url to the weekly target schedule. From it you can get an url to the schedule of a certain day,
         if you add to its end DATE_QUERY_URL from data/urls/urls.
         Until we called the get_daily_schedule_data function equals None.
-        Example: None or https://www.asu.ru/timetable/students/21/2129440242/
+        Example: None or https://www.asu.ru/timetable/students/21/2129440242/.
     :param alleged_target_name: This is the alleged name of the target because at the beginning we cannot say
         the exact name of the target, since the user can enter an incomplete name of the target and
         then the bot will offer him a choice on the inline keyboard.
-        Example: 'Дронов' or 'Мих'
+        Example: 'Дронов' or 'Мих'.
     :param target_date_query_url_code: Url code for finding a schedule for today.
-        Example: '20230326'
+        Example: '20230326'.
     :return:
         Int - if any error was caused other than none schedule. Contains an error code that will be processed in
-            processing_parser_errors function from utils/processing_parser_errors
+            processing_parser_errors function from utils/processing_parser_errors.
         List - if the none schedule error was caused. Сontains the full name of the target and an url to its weekly
             schedule, so that when we search for a schedule for tomorrow, for the current week or by calendar,
             we do not have to search for this information again. This error is processed in
-            processing_parser_none_schedule_error function from utils/processing_parser_none_schedule_error
+            processing_parser_none_schedule_error function from utils/processing_parser_none_schedule_error.
         Dict - Contains the key - the name of the alleged target and the value of the key - a link to the weekly
-            target schedule
+            target schedule.
         Tuple - Contains a dictionary with data about the daily schedule, the full name of the target, an url to the
-            weekly schedule of the target and the name of the schedule columns to create report schedule
+            weekly schedule of the target and the name of the schedule columns to create report schedule.
+            weekly schedule of the target and the name of the schedule columns to create report schedule.
     '''
 
     if target == STUDENT_TARGET:
@@ -385,7 +396,7 @@ async def daily_schedule(
             target_url=target_url,
             alleged_target_name=alleged_target_name,
             target_date_query_url_code=target_date_query_url_code,
-            target_query_url=STUDENTS_JSON_QUERY_URL,
+            target_query_url=JSON_STUDENTS_QUERY_URL,
             target_table_headers=STUDENT_TABLE_HEADERS
         )
     else:
@@ -395,6 +406,6 @@ async def daily_schedule(
             target_url=target_url,
             alleged_target_name=alleged_target_name,
             target_date_query_url_code=target_date_query_url_code,
-            target_query_url=LECTURERS_JSON_QUERY_URL,
+            target_query_url=JSON_LECTURERS_QUERY_URL,
             target_table_headers=LECTURER_TABLE_HEADERS
         )

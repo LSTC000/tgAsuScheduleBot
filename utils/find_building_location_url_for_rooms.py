@@ -4,9 +4,9 @@ from data.config import BUILDINGS_LOCATION_URL_DICT
 def find_building_location_url_for_rooms(audience: str) -> str:
     '''
     :param audience: Room name.
-        Example: '401 Л'
+        Example: '401 Л'.
     :return: Room name with building location url.
-        Example: '<a href="{housing_location_url}" title="корпус"><b>401 Л</b></a>.'
+        Example: '<a href="{housing_location_url}" title="корпус"><b>401 Л</b></a>.'.
     '''
 
     lower_audience = audience.lower()
