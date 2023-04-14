@@ -1,7 +1,7 @@
 from data.config import STUDENT_TARGET, LECTURER_TARGET, RATE_LIMIT_DICT, SCHEDULE_MESSAGE_KEY
 
 from data.memory_storage import (
-    TARGET,
+    TARGET_KEY,
     TARGET_URL_KEY,
     ALLEGED_TARGET_NAME_KEY,
     TARGET_DATE_QUERY_URL_CODE_KEY,
@@ -49,7 +49,7 @@ async def get_today_schedule(message: types.Message, state: FSMContext) -> None:
         async with state.proxy() as data:
             if alleged_target_name is not None:
                 try:
-                    if data[TARGET] == STUDENT_TARGET:
+                    if data[TARGET_KEY] == STUDENT_TARGET:
                         alleged_target_name = await text_to_student_group_convert(text=alleged_target_name)
                     else:
                         if len(alleged_target_name.split()) == 1:
