@@ -122,7 +122,7 @@ async def get_today_schedule(message: types.Message, state: FSMContext) -> None:
             # Get daily schedule: check functions/get_daily_schedule.
             # The schedule_cache check is in this function.
             await get_daily_schedule(
-                chat_id=user_id,
+                user_id=user_id,
                 user_name=message.from_user.first_name,
                 daily=True,
                 today=True,
@@ -130,4 +130,4 @@ async def get_today_schedule(message: types.Message, state: FSMContext) -> None:
                 state=state
             )
         except KeyError:
-            await bot.send_message(chat_id=message.from_user.id, text=CALLBACK_DATA_KEY_ERROR_MESSAGE)
+            await bot.send_message(chat_id=user_id, text=CALLBACK_DATA_KEY_ERROR_MESSAGE)

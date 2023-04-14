@@ -30,7 +30,7 @@ async def get_tomorrow_schedule(callback: types.CallbackQuery, state: FSMContext
             data[TARGET_DATE_QUERY_URL_CODE_KEY] = data[TOMORROW_TARGET_DATE_QUERY_URL_CODE_KEY]
         # Get daily schedule: check functions/get_daily_schedule.
         await get_daily_schedule(
-            chat_id=callback.from_user.id,
+            user_id=callback.from_user.id,
             user_name=callback.from_user.first_name,
             daily=True,
             today=False,

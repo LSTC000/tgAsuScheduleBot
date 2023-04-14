@@ -27,7 +27,7 @@ from aiogram.utils.exceptions import MessageNotModified, MessageToEditNotFound, 
 )
 @rate_limit(limit=RATE_LIMIT_DICT[MENU_REPLAY_KEYBOARD_KEY], key=MENU_REPLAY_KEYBOARD_KEY)
 async def cancel_to_main_menu_from_schedule_menu(message: types.Message, state: FSMContext) -> None:
-    chat_id = message.chat.id
+    user_id = message.from_user.id
     current_state = await state.get_state()
     # Clear all user data in memory storage.
     if current_state in [
@@ -41,7 +41,7 @@ async def cancel_to_main_menu_from_schedule_menu(message: types.Message, state: 
                     for message_id in data[SCHEDULE_INLINE_KEYBOARDS_KEY]:
                         try:
                             await bot.edit_message_reply_markup(
-                                chat_id=chat_id,
+                                chat_id=user_id,
                                 message_id=message_id,
                                 reply_markup=None
                             )
@@ -51,7 +51,7 @@ async def cancel_to_main_menu_from_schedule_menu(message: types.Message, state: 
                 if data[INLINE_CALENDAR_KEY] is not None:
                     try:
                         await bot.delete_message(
-                            chat_id=chat_id,
+                            chat_id=user_id,
                             message_id=data[INLINE_CALENDAR_KEY]
                         )
                     except MessageToDeleteNotFound:
@@ -64,7 +64,7 @@ async def cancel_to_main_menu_from_schedule_menu(message: types.Message, state: 
             data.clear()
 
     await bot.send_message(
-        chat_id=chat_id,
+        chat_id=user_id,
         text=MAIN_MENU_COMMAND_MESSAGE,
         reply_markup=get_main_menu_rkb()
     )

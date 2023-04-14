@@ -7,7 +7,7 @@ from database import UsersMessages
 
 async def add_users_messages(user_id: int, message_type: str, message_key: str) -> None:
     '''
-    :param user_id: Telegram user_id.
+    :param user_id: Telegram user id.
     :param message_type: Text or voice message type.
     :param message_key: Any message keys from data/config/middlewares/config except CHAT_GPT_MESSAGE_KEY.
     :return: None

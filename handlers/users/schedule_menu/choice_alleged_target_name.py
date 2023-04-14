@@ -29,7 +29,7 @@ from aiogram.dispatcher import FSMContext
 )
 @rate_limit(limit=RATE_LIMIT_DICT[SCHEDULE_INLINE_KEYBOARD_KEY], key=SCHEDULE_INLINE_KEYBOARD_KEY)
 async def choice_alleged_target_name(callback: types.CallbackQuery, state: FSMContext) -> None:
-    chat_id = callback.message.chat.id
+    user_id = callback.from_user.id
     try:
         async with state.proxy() as data:
             # Assign the target name chosen by the user to the variable alleged_target_name in user memory storage.
@@ -42,7 +42,7 @@ async def choice_alleged_target_name(callback: types.CallbackQuery, state: FSMCo
             # since this inline keyboard will always be displayed first in the work of our bot if it
             # finds more than one match for the alleged target name entered by the user.
             await bot.delete_message(
-                chat_id=chat_id,
+                chat_id=user_id,
                 message_id=data[SCHEDULE_INLINE_KEYBOARDS_KEY][0]
             )
             # We are clearing the history of the bot inline keyboards,
@@ -50,7 +50,7 @@ async def choice_alleged_target_name(callback: types.CallbackQuery, state: FSMCo
             data[SCHEDULE_INLINE_KEYBOARDS_KEY].clear()
         # Get daily schedule: check functions/get_daily_schedule.
         await get_daily_schedule(
-            chat_id=chat_id,
+            user_id=user_id,
             user_name=callback.from_user.first_name,
             daily=True,
             today=True,
@@ -58,4 +58,4 @@ async def choice_alleged_target_name(callback: types.CallbackQuery, state: FSMCo
             state=state
         )
     except KeyError:
-        await bot.send_message(chat_id=callback.from_user.id, text=CALLBACK_DATA_KEY_ERROR_MESSAGE)
+        await bot.send_message(chat_id=user_id, text=CALLBACK_DATA_KEY_ERROR_MESSAGE)

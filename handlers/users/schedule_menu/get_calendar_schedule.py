@@ -35,15 +35,15 @@ from aiogram.dispatcher import FSMContext
 )
 @rate_limit(limit=RATE_LIMIT_DICT[SCHEDULE_INLINE_KEYBOARD_KEY], key=SCHEDULE_INLINE_KEYBOARD_KEY)
 async def get_calendar(callback: types.CallbackQuery, state: FSMContext) -> None:
-    chat_id = callback.message.chat.id
+    user_id = callback.from_user.id
     # Delete the last calendar inline keyboard if there is one.
     async with state.proxy() as data:
         if data[INLINE_CALENDAR_KEY] is not None:
-            await bot.delete_message(chat_id=chat_id, message_id=data[INLINE_CALENDAR_KEY])
+            await bot.delete_message(chat_id=user_id, message_id=data[INLINE_CALENDAR_KEY])
     # Calling the calendar inline keyboard.
     # Check inline_calendar/inline_calendar.
     message = await bot.send_message(
-        chat_id=chat_id,
+        chat_id=user_id,
         text=CALENDAR_CHOICE_DATE_MESSAGE,
         reply_markup=await InlineCalendar().start_calendar(
             year=datetime.now().year,
@@ -62,7 +62,7 @@ async def get_calendar(callback: types.CallbackQuery, state: FSMContext) -> None
 )
 @rate_limit(limit=RATE_LIMIT_DICT[SCHEDULE_INLINE_KEYBOARD_KEY], key=SCHEDULE_INLINE_KEYBOARD_KEY)
 async def get_calendar_schedule(callback: types.CallbackQuery, state: FSMContext) -> None:
-    chat_id = callback.message.chat.id
+    user_id = callback.from_user.id
     # Check inline_calendar/inline_calendar.
     selected, calendar_date = await InlineCalendar().process_selection(
         callback=callback,
@@ -72,7 +72,7 @@ async def get_calendar_schedule(callback: types.CallbackQuery, state: FSMContext
 
     if selected:
         await bot.send_message(
-            chat_id=chat_id,
+            chat_id=user_id,
             text=CALENDAR_SELECTED_DATE_MESSAGE.format(calendar_date.strftime('%d-%m-%Y'))
         )
 
@@ -82,7 +82,7 @@ async def get_calendar_schedule(callback: types.CallbackQuery, state: FSMContext
                 data[TARGET_DATE_QUERY_URL_CODE_KEY] = calendar_date.strftime('%Y%m%d')
             # Get daily schedule: check functions/get_daily_schedule.
             await get_daily_schedule(
-                chat_id=chat_id,
+                user_id=user_id,
                 user_name=callback.from_user.first_name,
                 daily=True,
                 today=False,
@@ -90,4 +90,4 @@ async def get_calendar_schedule(callback: types.CallbackQuery, state: FSMContext
                 state=state
             )
         except KeyError:
-            await bot.send_message(chat_id=chat_id, text=CALLBACK_DATA_KEY_ERROR_MESSAGE)
+            await bot.send_message(chat_id=user_id, text=CALLBACK_DATA_KEY_ERROR_MESSAGE)

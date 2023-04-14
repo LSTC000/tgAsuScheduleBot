@@ -9,7 +9,7 @@ class UsersMessages(TimedBaseModel):
     # Auto increment id.
     id = Column(BigInteger, primary_key=True, autoincrement=True,
                 server_default=sql.text('nextval(\'users_messages_id_seq\')'))
-    # Telegram user_id.
+    # Telegram user id.
     user_id = Column(BigInteger, nullable=False)
     # Type of message: voice or text.
     message_type = Column(VARCHAR(8), nullable=False)

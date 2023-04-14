@@ -58,14 +58,9 @@ class ThrottlingAndDatabaseMiddleware(BaseMiddleware):
         loop = asyncio.get_running_loop()
         return int(loop.time())
 
-    async def throttling_check(
-            self,
-            user_id: int,
-            limit: int,
-            key: str
-    ) -> None:
+    async def throttling_check(self, user_id: int, limit: int, key: str) -> None:
         '''
-        :param user_id: Telegram user_id.
+        :param user_id: Telegram user id.
         :param limit: The time that must pass between two messages of a user of the same key.
         :param key: Key for different types of messages. You can find them all in data/config/middlewares/config.
         :return: None.

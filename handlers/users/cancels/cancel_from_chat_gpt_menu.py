@@ -30,7 +30,7 @@ from aiogram.dispatcher import FSMContext
 )
 @rate_limit(limit=RATE_LIMIT_DICT[MENU_REPLAY_KEYBOARD_KEY], key=MENU_REPLAY_KEYBOARD_KEY)
 async def cancel_to_main_menu_from_chat_gpt_menu(message: types.Message, state: FSMContext) -> None:
-    chat_id = message.chat.id
+    user_id = message.from_user.id
     current_state = await state.get_state()
 
     if current_state == ChatGptMenuStatesGroup.chat_gpt_clear_messages.state:
@@ -40,12 +40,12 @@ async def cancel_to_main_menu_from_chat_gpt_menu(message: types.Message, state: 
         # menu.
         async with state.proxy() as data:
             await bot.delete_message(
-                chat_id=chat_id,
+                chat_id=user_id,
                 message_id=data[LAST_CHAT_GPT_INLINE_KEYBOARD_KEY]
             )
 
             message = await bot.send_message(
-                chat_id=chat_id,
+                chat_id=user_id,
                 text=CHAT_GPT_CANCEL_TO_MAIN_MENU_MESSAGE,
                 reply_markup=chat_gpt_return_to_main_menu_ikb()
             )
@@ -67,14 +67,14 @@ async def cancel_to_main_menu_from_chat_gpt_menu(message: types.Message, state: 
             if data[COUNT_CHAT_GPT_MESSAGES_KEY]:
                 flag = True
                 await bot.send_message(
-                    chat_id=chat_id,
+                    chat_id=user_id,
                     text=CHAT_GPT_CANCEL_TO_MAIN_MENU_MESSAGE,
                     reply_markup=chat_gpt_return_to_main_menu_ikb()
                 )
             else:
                 data.clear()
                 await bot.send_message(
-                    chat_id=chat_id,
+                    chat_id=user_id,
                     text=MAIN_MENU_COMMAND_MESSAGE,
                     reply_markup=get_main_menu_rkb()
                 )
@@ -88,13 +88,13 @@ async def cancel_to_main_menu_from_chat_gpt_menu(message: types.Message, state: 
 @dp.callback_query_handler(state=ChatGptMenuStatesGroup.chat_gpt_confirm_cancel_to_main_menu)
 @rate_limit(limit=RATE_LIMIT_DICT[CHAT_GPT_INLINE_KEYBOARD_KEY], key=CHAT_GPT_INLINE_KEYBOARD_KEY)
 async def confirm_chat_gpt_cancel_to_main_menu(callback: types.CallbackQuery, state: FSMContext) -> None:
-    chat_id = callback.message.chat.id
+    user_id = callback.from_user.id
     # If the callback data contains confirmation of entering the main menu.
     # Else we remain in the Chat GPT menu.
     if callback.data == CALLBACK_DATA_CONFIRM_CHAT_GPT_CANCEL_TO_MAIN_MENU:
         # Inform the user that his dialog with Chat GPT has been deleted.
         await bot.edit_message_text(
-            chat_id=chat_id,
+            chat_id=user_id,
             message_id=callback.message.message_id,
             text=CONFIRM_CHAT_GPT_CANCEL_TO_MAIN_MENU_MESSAGE.format(callback.from_user.first_name)
         )
@@ -103,7 +103,7 @@ async def confirm_chat_gpt_cancel_to_main_menu(callback: types.CallbackQuery, st
             data.clear()
 
         await bot.send_message(
-            chat_id=chat_id,
+            chat_id=user_id,
             text=MAIN_MENU_COMMAND_MESSAGE,
             reply_markup=get_main_menu_rkb()
         )
@@ -111,7 +111,7 @@ async def confirm_chat_gpt_cancel_to_main_menu(callback: types.CallbackQuery, st
     else:
         # Inform the user that he can continue the dialogue with Chat GPT.
         await bot.edit_message_text(
-            chat_id=chat_id,
+            chat_id=user_id,
             message_id=callback.message.message_id,
             text=CANCEL_CHAT_GPT_CANCEL_TO_MAIN_MENU_MESSAGE.format(callback.from_user.first_name)
         )

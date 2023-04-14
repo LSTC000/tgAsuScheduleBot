@@ -32,9 +32,9 @@ from data.urls import (
 import httpx
 
 
-async def get_alleged_targets_urls_dict(chat_id: str, target: str, alleged_target_url: str) -> Union[int, dict]:
+async def get_alleged_targets_urls_dict(user_id: int, target: str, alleged_target_url: str) -> Union[int, dict]:
     '''
-    :param chat_id: Telegram user chat_id.
+    :param user_id: Telegram user user id.
     :param target: STUDENT_TARGET or LECTURER_TARGET from data/config/parser/config.
     :param alleged_target_url: Url to search for the alleged targets.
         Example: https://www.asu.ru/timetable/search/students/?query=404.
@@ -46,7 +46,7 @@ async def get_alleged_targets_urls_dict(chat_id: str, target: str, alleged_targe
 
     try:
         async with httpx.AsyncClient() as client:
-            response = await client.get(url=alleged_target_url, headers=REQUEST_HEADERS, params={'chat_id': chat_id})
+            response = await client.get(url=alleged_target_url, headers=REQUEST_HEADERS, params={'chat_id': user_id})
     except (httpx.HTTPError, httpx.RequestError, httpx.TimeoutException):
         return GET_ALLEGED_TARGETS_URLS_DICT_RESPONSE_OR_JSON_ERROR_CODE
 
@@ -98,14 +98,14 @@ async def get_alleged_targets_urls_dict(chat_id: str, target: str, alleged_targe
 
 
 async def get_daily_schedule_dict(
-        chat_id: str,
+        user_id: int,
         target: str,
         url: str,
         date_query_url_code: str,
         table_headers: list
 ) -> Union[int, dict]:
     '''
-    :param chat_id: Telegram user chat_id.
+    :param user_id: Telegram user id.
     :param target: STUDENT_TARGET or LECTURER_TARGET from data/config/parser/config.
     :param url: Url to the weekly target schedule.
         Example: https://www.asu.ru/timetable/students/21/2129440242/.
@@ -122,7 +122,7 @@ async def get_daily_schedule_dict(
 
     try:
         async with httpx.AsyncClient() as client:
-            response = await client.get(url=date_query_url, headers=REQUEST_HEADERS, params={'chat_id': chat_id})
+            response = await client.get(url=date_query_url, headers=REQUEST_HEADERS, params={'chat_id': user_id})
     except (httpx.HTTPError, httpx.RequestError, httpx.TimeoutException):
         return GET_DAILY_SCHEDULE_DICT_RESPONSE_OR_JSON_ERROR_CODE
 
@@ -275,7 +275,7 @@ async def get_daily_schedule_dict(
 
 
 async def get_daily_schedule_data(
-        chat_id: str,
+        user_id: int,
         target: str,
         target_url: str,
         alleged_target_name: str,
@@ -284,7 +284,7 @@ async def get_daily_schedule_data(
         target_table_headers: list
 ) -> Union[int, List[str], dict, Tuple[dict, str, str, list]]:
     '''
-    :param chat_id: Telegram user chat_id.
+    :param user_id: Telegram user id.
     :param target: STUDENT_TARGET or LECTURER_TARGET from data/config/parser/config.
     :param target_url: Url to the weekly target schedule. From it you can get an url to the schedule of a certain day,
         if you add to its end DATE_QUERY_URL from data/urls/urls.
@@ -320,7 +320,7 @@ async def get_daily_schedule_data(
         target_query_url = target_query_url.format(alleged_target_name_encoded, JSON_TOKEN)
 
         alleged_targets_urls_dict = await get_alleged_targets_urls_dict(
-            chat_id=chat_id,
+            user_id=user_id,
             target=target,
             alleged_target_url=target_query_url
         )
@@ -338,7 +338,7 @@ async def get_daily_schedule_data(
         target_name = alleged_target_name
 
     daily_schedule_dict = await get_daily_schedule_dict(
-        chat_id=chat_id,
+        user_id=user_id,
         target=target,
         url=target_url,
         date_query_url_code=target_date_query_url_code,
@@ -356,14 +356,14 @@ async def get_daily_schedule_data(
 
 
 async def daily_schedule(
-        chat_id: str,
+        user_id: int,
         target: str,
         target_url: str,
         alleged_target_name: str,
         target_date_query_url_code: str
 ) -> Union[int, List[str], dict, Tuple[dict, str, str, list]]:
     '''
-    :param chat_id: Telegram user chat_id.
+    :param user_id: Telegram user id.
     :param target: STUDENT_TARGET or LECTURER_TARGET from data/config/parser/config.
     :param target_url: Url to the weekly target schedule. From it you can get an url to the schedule of a certain day,
         if you add to its end DATE_QUERY_URL from data/urls/urls.
@@ -391,7 +391,7 @@ async def daily_schedule(
 
     if target == STUDENT_TARGET:
         return await get_daily_schedule_data(
-            chat_id=chat_id,
+            user_id=user_id,
             target=target,
             target_url=target_url,
             alleged_target_name=alleged_target_name,
@@ -401,7 +401,7 @@ async def daily_schedule(
         )
     else:
         return await get_daily_schedule_data(
-            chat_id=chat_id,
+            user_id=user_id,
             target=target,
             target_url=target_url,
             alleged_target_name=alleged_target_name,

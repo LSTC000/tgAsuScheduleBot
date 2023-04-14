@@ -7,7 +7,7 @@ from database import UsersChatGptMessages
 
 async def add_users_chat_gpt_messages(user_id: int, message_type: str) -> None:
     '''
-    :param user_id: Telegram user_id.
+    :param user_id: Telegram user id.
     :param message_type: Text or voice message type.
     :return: None.
     '''

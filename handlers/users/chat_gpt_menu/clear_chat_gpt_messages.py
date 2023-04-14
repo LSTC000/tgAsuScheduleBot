@@ -67,5 +67,5 @@ async def confirm_clear_chat_gpt_messages(callback: types.CallbackQuery, state: 
     else:
         msg = CANCEL_CLEAR_CHAT_GPT_MESSAGES_MESSAGE
 
-    await bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.message_id, text=msg)
+    await bot.edit_message_text(chat_id=callback.from_user.id, message_id=callback.message.message_id, text=msg)
     await MenuStatesGroup.chat_gpt_menu.set()

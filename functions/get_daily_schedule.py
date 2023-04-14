@@ -35,7 +35,7 @@ from aiogram.dispatcher import FSMContext
 
 
 async def get_daily_schedule(
-        chat_id: str,
+        user_id: int,
         user_name: str,
         daily: bool,
         today: bool,
@@ -43,7 +43,7 @@ async def get_daily_schedule(
         state: FSMContext
 ) -> None:
     '''
-    :param chat_id: Telegram user chat id.
+    :param user_id: Telegram user id.
     :param user_name: Telegram user first name.
     :param daily: True if you want to know the schedule for the day else False.
         If you find out the schedule using the calendar (calendar param is True) then any value.
@@ -56,7 +56,7 @@ async def get_daily_schedule(
     :return: None.
     '''
 
-    start_find_message = await bot.send_message(chat_id=chat_id, text=START_FIND_DAILY_SCHEDULE_MESSAGE)
+    start_find_message = await bot.send_message(chat_id=user_id, text=START_FIND_DAILY_SCHEDULE_MESSAGE)
 
     try:
         async with state.proxy() as data:
@@ -68,7 +68,7 @@ async def get_daily_schedule(
             # If the request is not in the schedule_cache then we will execute it.
             if not in_cache:
                 schedule = await daily_schedule(
-                    chat_id=chat_id,
+                    user_id=user_id,
                     target=data[TARGET_KEY],
                     target_url=data[TARGET_URL_KEY],
                     alleged_target_name=data[ALLEGED_TARGET_NAME_KEY],
@@ -87,7 +87,7 @@ async def get_daily_schedule(
                     user_name=user_name,
                     target=data[TARGET_KEY]
                 )
-                await bot.send_message(chat_id=chat_id, text=msg)
+                await bot.send_message(chat_id=user_id, text=msg)
             elif isinstance(schedule, dict):
                 # Processing choice alleged target name.
 
@@ -102,7 +102,7 @@ async def get_daily_schedule(
 
                 alleged_target_ikb = get_alleged_target_name_ikb(data[ALLEGED_TARGET_INFO_KEY])
 
-                message = await bot.send_message(chat_id=chat_id, text=msg, reply_markup=alleged_target_ikb)
+                message = await bot.send_message(chat_id=user_id, text=msg, reply_markup=alleged_target_ikb)
                 # Add selected inline keyboard.
                 data[SCHEDULE_INLINE_KEYBOARDS_KEY].append(message.message_id)
             elif isinstance(schedule, list):
@@ -128,7 +128,7 @@ async def get_daily_schedule(
                 else:
                     ikb = get_calendar_ikb()
 
-                message = await bot.send_message(chat_id=chat_id, text=msg, reply_markup=ikb)
+                message = await bot.send_message(chat_id=user_id, text=msg, reply_markup=ikb)
                 # Add selected inline keyboard.
                 data[SCHEDULE_INLINE_KEYBOARDS_KEY].append(message.message_id)
             else:
@@ -153,10 +153,10 @@ async def get_daily_schedule(
                 else:
                     ikb = get_calendar_ikb()
 
-                message = await bot.send_message(chat_id=chat_id, text=report, reply_markup=ikb)
+                message = await bot.send_message(chat_id=user_id, text=report, reply_markup=ikb)
                 # Add selected inline keyboard.
                 data[SCHEDULE_INLINE_KEYBOARDS_KEY].append(message.message_id)
     except KeyError:
-        await bot.send_message(chat_id=chat_id, text=CALLBACK_DATA_KEY_ERROR_MESSAGE)
+        await bot.send_message(chat_id=user_id, text=CALLBACK_DATA_KEY_ERROR_MESSAGE)
 
-    await bot.delete_message(chat_id=chat_id, message_id=start_find_message.message_id)
+    await bot.delete_message(chat_id=user_id, message_id=start_find_message.message_id)

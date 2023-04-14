@@ -7,7 +7,7 @@ from database import UsersThrottlingMessages
 
 async def add_users_throttling_messages(user_id: int, throttling_key: str, sleep_time: int) -> None:
     '''
-    :param user_id: Telegram user_id.
+    :param user_id: Telegram user id.
     :param throttling_key: Any key from data/config/middlewares/config.
     :param sleep_time: Throttling sleep time.
     :return: None.

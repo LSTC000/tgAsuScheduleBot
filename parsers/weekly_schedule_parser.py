@@ -10,7 +10,10 @@ from data.config import (
     JSON_TOKEN
 )
 
-from errors import GET_WEEKLY_SCHEDULE_LIST_RESPONSE_OR_JSON_ERROR_CODE, GET_WEEKLY_SCHEDULE_LIST_NONE_SCHEDULE_ERROR_CODE
+from errors import (
+    GET_WEEKLY_SCHEDULE_LIST_RESPONSE_OR_JSON_ERROR_CODE,
+    GET_WEEKLY_SCHEDULE_LIST_NONE_SCHEDULE_ERROR_CODE
+)
 
 from data.urls import JSON_WEEKLY_SCHEDULE_URL, FREE_ROOMS_URL_DICT
 
@@ -18,13 +21,13 @@ import httpx
 
 
 async def get_weekly_schedule_list(
-        chat_id: str,
+        user_id: int,
         target: str,
         url: str,
         table_headers: list
 ) -> Union[int, List[dict]]:
     '''
-    :param chat_id: Telegram user chat_id.
+    :param user_id: Telegram user id.
     :param target: STUDENT_TARGET or LECTURER_TARGET from data/config/parser/config.
     :param url: Url to the weekly target schedule.
         Example: https://www.asu.ru/timetable/students/21/2129440242/.
@@ -39,7 +42,7 @@ async def get_weekly_schedule_list(
 
     try:
         async with httpx.AsyncClient() as client:
-            response = await client.get(url=url, headers=REQUEST_HEADERS, params={'chat_id': chat_id})
+            response = await client.get(url=url, headers=REQUEST_HEADERS, params={'chat_id': user_id})
     except (httpx.HTTPError, httpx.RequestError, httpx.TimeoutException):
         return GET_WEEKLY_SCHEDULE_LIST_RESPONSE_OR_JSON_ERROR_CODE
 
@@ -233,13 +236,13 @@ async def get_weekly_schedule_list(
 
 
 async def get_weekly_schedule_data(
-        chat_id: str,
+        user_id: int,
         target: str,
         target_weekly_schedule_url: str,
         target_table_headers: list
 ) -> Union[int, str, Tuple[List[dict], str, list]]:
     '''
-    :param chat_id: Telegram user chat_id.
+    :param user_id: Telegram user id.
     :param target: STUDENT_TARGET or LECTURER_TARGET from data/config/parser/config.
     :param target_weekly_schedule_url: Url to the weekly target schedule.
         Example: https://www.asu.ru/timetable/students/21/2129440242/.
@@ -254,7 +257,7 @@ async def get_weekly_schedule_data(
     '''
 
     weekly_schedule_list = await get_weekly_schedule_list(
-        chat_id=chat_id,
+        user_id=user_id,
         target=target,
         url=target_weekly_schedule_url,
         table_headers=target_table_headers
@@ -271,12 +274,12 @@ async def get_weekly_schedule_data(
 
 
 async def weekly_schedule(
-        chat_id: str,
+        user_id: int,
         target: str,
         target_weekly_schedule_url: str
 ) -> Union[int, str, Tuple[List[dict], str, list]]:
     '''
-    :param chat_id: Telegram user chat_id.
+    :param user_id: Telegram user id.
     :param target: STUDENT_TARGET or LECTURER_TARGET from data/config/parser/config.
     :param target_weekly_schedule_url: Url to the weekly target schedule.
         Example: https://www.asu.ru/timetable/students/21/2129440242/.
@@ -291,14 +294,14 @@ async def weekly_schedule(
 
     if target == STUDENT_TARGET:
         return await get_weekly_schedule_data(
-            chat_id=chat_id,
+            user_id=user_id,
             target=target,
             target_weekly_schedule_url=target_weekly_schedule_url,
             target_table_headers=STUDENT_TABLE_HEADERS
         )
     else:
         return await get_weekly_schedule_data(
-            chat_id=chat_id,
+            user_id=user_id,
             target=target,
             target_weekly_schedule_url=target_weekly_schedule_url,
             target_table_headers=LECTURER_TABLE_HEADERS

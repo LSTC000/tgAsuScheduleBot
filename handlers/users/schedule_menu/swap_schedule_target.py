@@ -26,9 +26,9 @@ from aiogram.dispatcher import FSMContext
 )
 @rate_limit(limit=RATE_LIMIT_DICT[MENU_REPLAY_KEYBOARD_KEY], key=MENU_REPLAY_KEYBOARD_KEY)
 async def swap_schedule_target(message: types.Message, state: FSMContext) -> None:
-    chat_id = message.chat.id
+    user_id = message.from_user.id
     text = message.text
-    # Target is a STUDENT_TARGET, LECTURER_TARGET or a ROOM_TARGET in data/config/parsers/config.
+    # Target is a STUDENT_TARGET or LECTURER_TARGET in data/config/parsers/config.
     # Depending on which target the user chooses on the replay keyboard certain actions will be performed.
     if text == STUDENT_TARGET_RKB_MESSAGE:
         msg = ENTER_STUDENT_TARGET_NAME_MESSAGE
@@ -38,14 +38,14 @@ async def swap_schedule_target(message: types.Message, state: FSMContext) -> Non
             if data[SCHEDULE_INLINE_KEYBOARDS_KEY]:
                 for message_id in data[SCHEDULE_INLINE_KEYBOARDS_KEY]:
                     await bot.edit_message_reply_markup(
-                        chat_id=chat_id,
+                        chat_id=user_id,
                         message_id=message_id,
                         reply_markup=None
                     )
             # Delete the last calendar inline keyboard if there is one.
             if data[INLINE_CALENDAR_KEY] is not None:
                 await bot.delete_message(
-                    chat_id=chat_id,
+                    chat_id=user_id,
                     message_id=data[INLINE_CALENDAR_KEY]
                 )
             # Clear all other data in the user's memory storage.
@@ -64,14 +64,14 @@ async def swap_schedule_target(message: types.Message, state: FSMContext) -> Non
             if data[SCHEDULE_INLINE_KEYBOARDS_KEY]:
                 for message_id in data[SCHEDULE_INLINE_KEYBOARDS_KEY]:
                     await bot.edit_message_reply_markup(
-                        chat_id=chat_id,
+                        chat_id=user_id,
                         message_id=message_id,
                         reply_markup=None
                     )
             # Delete the last calendar inline keyboard if there is one.
             if data[INLINE_CALENDAR_KEY] is not None:
                 await bot.delete_message(
-                    chat_id=chat_id,
+                    chat_id=user_id,
                     message_id=data[INLINE_CALENDAR_KEY]
                 )
             # Clear all other data in the user's memory storage.
@@ -83,4 +83,4 @@ async def swap_schedule_target(message: types.Message, state: FSMContext) -> Non
 
         await ScheduleMenuStatesGroup.lecturer_schedule.set()
 
-    await bot.send_message(chat_id=chat_id, text=msg)
+    await bot.send_message(chat_id=user_id, text=msg)

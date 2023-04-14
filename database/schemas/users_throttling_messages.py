@@ -9,7 +9,7 @@ class UsersThrottlingMessages(TimedBaseModel):
     # Auto increment id.
     id = Column(BigInteger, primary_key=True, autoincrement=True,
                 server_default=sql.text('nextval(\'users_throttling_messages_id_seq\')'))
-    # Telegram user_id.
+    # Telegram user id.
     user_id = Column(BigInteger, nullable=False)
     # Any key from data/config/middlewares/config.
     throttling_key = Column(VARCHAR(32), nullable=False)

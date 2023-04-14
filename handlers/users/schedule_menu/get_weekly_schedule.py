@@ -49,7 +49,7 @@ async def get_weekly_schedule(callback: types.CallbackQuery, state: FSMContext) 
             # If the request is not in the schedule_cache then we will execute it.
             if not in_cache:
                 schedule = await weekly_schedule(
-                    chat_id=user_id,
+                    user_id=user_id,
                     target=data[TARGET_KEY],
                     target_weekly_schedule_url=data[TARGET_URL_KEY]
                 )
