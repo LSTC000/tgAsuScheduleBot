@@ -3,7 +3,7 @@ services:
   postgresql:
     image: postgres:15-alpine
     env_file:
-      - .env/
+      - .env
     volumes:
       - pgdata:/var/lib/postgresql/data
     restart: on-failure
@@ -13,7 +13,7 @@ services:
     build: .
     command: sh -c "make migrate && python bot"
     env_file:
-      - .env/
+      - .env
     restart: always
     depends_on:
       - postgresql
