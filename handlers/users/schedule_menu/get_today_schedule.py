@@ -1,6 +1,7 @@
 from data.config import STUDENT_TARGET, LECTURER_TARGET, RATE_LIMIT_DICT, SCHEDULE_MESSAGE_KEY
 
 from data.memory_storage import (
+    TARGET,
     TARGET_URL_KEY,
     ALLEGED_TARGET_NAME_KEY,
     TARGET_DATE_QUERY_URL_CODE_KEY,
