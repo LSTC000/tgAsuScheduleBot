@@ -32,7 +32,7 @@ bot = Bot(token=BOT_TOKEN, parse_mode=PARSE_MODE, disable_web_page_preview=DISAB
 dp = Dispatcher(bot=bot, storage=storage)
 
 schedule_stt = STT(model_path=STT_LOW_MODEL_PATH, sample_rate=SAMPLE_RATE, ffmpeg_path=FFMPEG_PATH)
-chat_gpt_stt = STT(model_path=STT_LOW_MODEL_PATH, sample_rate=SAMPLE_RATE, ffmpeg_path=FFMPEG_PATH)
+chat_gpt_stt = STT(model_path=STT_HIGH_MODEL_PATH, sample_rate=SAMPLE_RATE, ffmpeg_path=FFMPEG_PATH)
 
 db = Gino()
 
