@@ -6,7 +6,7 @@ from data.callbacks import (
     CALLBACK_DATA_GET_CALENDAR_SCHEDULE_SEPARATOR,
 )
 
-from data.memory_storage import (
+from data.redis import (
     TARGET_DATE_QUERY_URL_CODE_KEY,
     INLINE_CALENDAR_KEY
 )

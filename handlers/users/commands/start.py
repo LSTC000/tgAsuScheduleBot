@@ -1,4 +1,4 @@
-from data.memory_storage import (
+from data.redis import (
     INLINE_CALENDAR_KEY,
     SCHEDULE_INLINE_KEYBOARDS_KEY,
     LAST_CHAT_GPT_INLINE_KEYBOARD_KEY

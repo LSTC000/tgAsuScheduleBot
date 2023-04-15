@@ -2,9 +2,16 @@ import logging
 
 from data.config import SKIP_UPDATES, ADMIN
 
+from data.messages import (
+    ADMIN_STARTUP_MESSAGE,
+    ADMIN_SHUTDOWN_MESSAGE,
+    USERS_STARTUP_MESSAGE,
+    USERS_SHUTDOWN_MESSAGE
+)
+
 from loader import dp, bot, logger
 
-from database import startup_setup, shutdown_setup
+from database import startup_setup, shutdown_setup, select_users
 
 from middlewares import ThrottlingAndDatabaseMiddleware
 
@@ -17,6 +24,8 @@ from handlers import (
     register_users_schedule_menu,
     register_users_chat_gpt_menu
 )
+
+from sqlalchemy.orm import Session
 
 from aiogram import Bot, Dispatcher
 from aiogram.utils import executor
@@ -45,10 +54,7 @@ async def on_startup(dispatcher: Dispatcher):
         format=u'%(filename)s:%(lineno)d #%(levelname)-8s [%(asctime)s] - %(name)s - %(message)s'
     )
 
-    logger.info('Starting bot!')
-    await bot.send_message(chat_id=ADMIN, text='Starting bot!')
-
-    logger.info('Setup PostgreSQL Connection')
+    logger.info('Setup PostgreSQL connection')
     await startup_setup()
 
     logger.info('Register all middlewares')
@@ -60,13 +66,29 @@ async def on_startup(dispatcher: Dispatcher):
     logger.info('Register all handlers')
     register_all_handlers(dispatcher)
 
+    logger.info('Bot starting users alert')
+    users = await select_users()
+    for user in users:
+        await bot.send_message(chat_id=user[0], text=USERS_STARTUP_MESSAGE)
+
+    logger.info('Starting bot!')
+    await bot.send_message(chat_id=ADMIN, text=ADMIN_STARTUP_MESSAGE)
+
 
 async def on_shutdown(dispatcher: Dispatcher):
-    logger.info('Closing PostgreSQL Connection')
+    logger.info('Bot stopped users alert')
+    users = await select_users()
+    for user in users:
+        await bot.send_message(chat_id=user[0], text=USERS_SHUTDOWN_MESSAGE)
+
+    logger.info('Closing PostgreSQL connection')
     await shutdown_setup()
 
+    logger.info('Closing storage')
+    await dp.storage.close()
+
     logger.info('Bot successfully stopped!')
-    await bot.send_message(chat_id=ADMIN, text='Bot successfully stopped!')
+    await bot.send_message(chat_id=ADMIN, text=ADMIN_SHUTDOWN_MESSAGE)
 
 
 if __name__ == '__main__':

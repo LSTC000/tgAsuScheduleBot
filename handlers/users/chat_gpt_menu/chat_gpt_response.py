@@ -1,4 +1,4 @@
-from data.memory_storage import CHAT_GPT_MESSAGES_KEY, COUNT_CHAT_GPT_MESSAGES_KEY
+from data.redis import CHAT_GPT_MESSAGES_KEY, COUNT_CHAT_GPT_MESSAGES_KEY
 
 from data.config import (
     RATE_LIMIT_DICT,

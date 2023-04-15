@@ -1,6 +1,6 @@
 from data.config import STUDENT_TARGET
 
-from data.memory_storage import (
+from data.redis import (
     TARGET_KEY,
     TARGET_URL_KEY,
     ALLEGED_TARGET_NAME_KEY,

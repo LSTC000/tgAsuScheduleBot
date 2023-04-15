@@ -1,3 +1,4 @@
+from .bot import *
 from .errors import *
 from .keyboards import *
 from .handlers import *

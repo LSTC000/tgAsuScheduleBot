@@ -11,7 +11,10 @@ from data.config import (
     SCHEDULE_MAXSIZE,
     VOICE_MAXSIZE,
     SCHEDULE_TTL,
-    VOICE_TTL
+    VOICE_TTL,
+    REDIS_HOST,
+    REDIS_PORT,
+    REDIS_DB
 )
 
 from stt import STT
@@ -22,12 +25,14 @@ from cachetools import TTLCache
 
 from aiogram import Bot, Dispatcher
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
+from aiogram.contrib.fsm_storage.redis import RedisStorage2
 
 
 __all__ = ['bot', 'dp', 'schedule_stt', 'chat_gpt_stt', 'db', 'schedule_cache', 'voice_cache', 'logger']
 
 
-storage = MemoryStorage()
+storage = RedisStorage2(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB)
+
 bot = Bot(token=BOT_TOKEN, parse_mode=PARSE_MODE, disable_web_page_preview=DISABLE_WEB_PAGE_PREVIEW)
 dp = Dispatcher(bot=bot, storage=storage)
 

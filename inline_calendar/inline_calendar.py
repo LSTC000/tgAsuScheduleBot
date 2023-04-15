@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 from data.callbacks import CALLBACK_DATA_GET_CALENDAR_SCHEDULE_SEPARATOR
 
-from data.memory_storage import INLINE_CALENDAR_DATA_KEY, INLINE_CALENDAR_KEY
+from data.redis import INLINE_CALENDAR_DATA_KEY, INLINE_CALENDAR_KEY
 
 from data.config import RU_MONTH_NAME
 

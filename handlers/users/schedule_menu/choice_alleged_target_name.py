@@ -1,6 +1,6 @@
 from data.callbacks import CALLBACK_DATA_GET_ALLEGED_TARGET_SEPARATOR
 
-from data.memory_storage import (
+from data.redis import (
     TARGET_URL_KEY,
     ALLEGED_TARGET_NAME_KEY,
     ALLEGED_TARGET_INFO_KEY,

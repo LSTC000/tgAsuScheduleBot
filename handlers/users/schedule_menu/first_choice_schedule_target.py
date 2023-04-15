@@ -1,4 +1,4 @@
-from data.memory_storage import (
+from data.redis import (
     TARGET_KEY,
     SCHEDULE_INLINE_KEYBOARDS_KEY,
     INLINE_CALENDAR_KEY

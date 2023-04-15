@@ -11,3 +11,4 @@ from .urls import *
 from .utils import *
 from .cache import *
 from .ner import *
+from .redis import *

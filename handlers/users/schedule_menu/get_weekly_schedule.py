@@ -1,6 +1,6 @@
 from data.callbacks import CALLBACK_DATA_GET_WEEKLY_SCHEDULE
 
-from data.memory_storage import (
+from data.redis import (
     TARGET_KEY,
     TARGET_URL_KEY,
     ALLEGED_TARGET_NAME_KEY,
