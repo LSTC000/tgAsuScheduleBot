@@ -6,6 +6,7 @@ from data.config import (
     CHAT_GPT_TOKEN,
     MODEL,
     MAX_TOKENS,
+    MAX_CONTENT_TOKENS,
     TEMPERATURE,
     MAX_CHAT_GPT_MESSAGES,
     CHAT_GPT_ROLE,
@@ -16,6 +17,7 @@ from data.messages import (
     START_FIND_CHAT_GPT_MESSAGE,
     VOICE_CONVERT_ERROR_MESSAGE,
     LIMIT_CHAT_GPT_MESSAGES_MESSAGE,
+    LIMIT_CHAT_GPT_MAX_CONTENT_TOKENS_MESSAGE,
     CHAT_GPT_CONNECT_ERROR_MESSAGE
 )
 
@@ -52,10 +54,17 @@ async def chat_gpt_response(message: types.Message, state: FSMContext) -> None:
             stt=chat_gpt_stt
         )
     else:
-        content = message.text
-    # If we were unable to process the voice message then we send a message about it.
+        # Check if the MAX_CONTENT_TOKENS is exceeded.
+        content = message.text if len(message.text) <= MAX_CONTENT_TOKENS else None
+    # If we failed to process a voice message or the MAX_CONTENT_TOKENS was exceeded, then we send a message about it.
     if content is None:
-        await bot.send_message(chat_id=user_id, text=VOICE_CONVERT_ERROR_MESSAGE)
+        if message.content_type == 'voice':
+            await bot.send_message(chat_id=user_id, text=VOICE_CONVERT_ERROR_MESSAGE)
+        else:
+            await bot.send_message(
+                chat_id=user_id,
+                text=LIMIT_CHAT_GPT_MAX_CONTENT_TOKENS_MESSAGE.format(MAX_CONTENT_TOKENS)
+            )
     else:
         start_find_message = await bot.send_message(chat_id=user_id, text=START_FIND_CHAT_GPT_MESSAGE)
 
