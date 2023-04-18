@@ -25,8 +25,6 @@ from handlers import (
     register_users_chat_gpt_menu
 )
 
-from sqlalchemy.orm import Session
-
 from aiogram import Bot, Dispatcher
 from aiogram.utils import executor
 
@@ -69,7 +67,7 @@ async def on_startup(dispatcher: Dispatcher):
     logger.info('Bot starting users alert')
     users = await select_users()
     for user in users:
-        await bot.send_message(chat_id=user[0], text=USERS_STARTUP_MESSAGE)
+        await bot.send_message(chat_id=user[0], text=USERS_STARTUP_MESSAGE, disable_notification=True)
 
     logger.info('Starting bot!')
     await bot.send_message(chat_id=ADMIN, text=ADMIN_STARTUP_MESSAGE)
@@ -79,7 +77,7 @@ async def on_shutdown(dispatcher: Dispatcher):
     logger.info('Bot stopped users alert')
     users = await select_users()
     for user in users:
-        await bot.send_message(chat_id=user[0], text=USERS_SHUTDOWN_MESSAGE)
+        await bot.send_message(chat_id=user[0], text=USERS_SHUTDOWN_MESSAGE, disable_notification=True)
 
     logger.info('Closing PostgreSQL connection')
     await shutdown_setup()
