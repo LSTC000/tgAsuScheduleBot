@@ -83,7 +83,7 @@ async def chat_gpt_response(message: types.Message, state: FSMContext) -> None:
                 # And assign a message counter to the response.
                 model_content = response['choices'][0]['message']['content']
                 data[CHAT_GPT_MESSAGES_KEY].append({"role": CHAT_GPT_ROLE, "content": model_content})
-                model_content = f"<b>{data[COUNT_CHAT_GPT_MESSAGES_KEY]}/{MAX_CHAT_GPT_MESSAGES}:</b> " + model_content
+                model_content = f"{data[COUNT_CHAT_GPT_MESSAGES_KEY]}/{MAX_CHAT_GPT_MESSAGES}: " + model_content
                 # Counting tokens.
                 count_tokens = len(model_content)
                 # If the number of tokens is greater than the MAX_TOKENS.
