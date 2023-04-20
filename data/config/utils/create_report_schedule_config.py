@@ -31,4 +31,3 @@ CONVERT_TABLE_HEADERS = {
     'room': '🚪',
     'free_rooms': 'Свободные аудитории'
 }
-
