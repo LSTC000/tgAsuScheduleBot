@@ -3,7 +3,8 @@ from typing import Union
 from data.config import (
     STUDENT_TARGET,
     DAY_CONVERT_DICT,
-    ORDER_CONVERT_DICT
+    ORDER_CONVERT_DICT,
+    CONVERT_TABLE_HEADERS
 )
 
 from utils.find_building_location_url_for_rooms import find_building_location_url_for_rooms
@@ -47,15 +48,16 @@ def create_report_daily_schedule(
     for i in range(count_subjects):
         for key in target_table_headers[1:]:
             if key == target_table_headers[1]:
-                report += f'<b>{key}:</b> {ORDER_CONVERT_DICT[target_schedule[key][i]]}\n'
+                report += f'<b>{CONVERT_TABLE_HEADERS[key]}</b> {ORDER_CONVERT_DICT[target_schedule[key][i]]}\n'
             elif key == target_table_headers[-2]:
-                report += f'<b>{key}:</b> ' \
+                report += f'<b>{CONVERT_TABLE_HEADERS[key]}</b> ' \
                           f'{find_building_location_url_for_rooms(target_schedule[key][i])}\n'
             elif key == target_table_headers[-1]:
                 if target_schedule[key][i]:
-                    report += f'<a href="{target_schedule[key][i]}" title="свободные аудитории"><b>{key}</b></a>\n'
+                    report += f'<a href="{target_schedule[key][i]}" title="свободные аудитории">' \
+                              f'<b>{CONVERT_TABLE_HEADERS[key]}</b></a>\n'
             else:
-                report += f'<b>{key}:</b> {target_schedule[key][i]}\n'
+                report += f'<b>{CONVERT_TABLE_HEADERS[key]}</b> {target_schedule[key][i]}\n'
         report += '\n'
     # Add an url to the weekly target schedule.
     report += f'🚀 <a href="{target_url}" title="расписание"><b>Расписание на текущую неделю</b></a>'

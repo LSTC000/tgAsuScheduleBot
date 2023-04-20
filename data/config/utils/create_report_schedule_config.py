@@ -20,3 +20,15 @@ ORDER_CONVERT_DICT = {
     '9': '9️⃣',
     '10': '🔟'
 }
+
+CONVERT_TABLE_HEADERS = {
+    'date': 'Дата',
+    'order': 'Порядок',
+    'time': '🕑',
+    'subject': '📚',
+    'group': '👨‍🎓',
+    'lecturer': '👩‍🏫',
+    'room': '🚪',
+    'free_rooms': 'Свободные аудитории'
+}
+
