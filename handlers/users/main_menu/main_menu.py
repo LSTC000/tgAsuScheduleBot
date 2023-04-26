@@ -9,7 +9,7 @@ from data.messages import (
     SCHEDULE_MENU_RKB_MESSAGE,
     CHAT_GPT_MENU_RKB_MESSAGE,
     ASU_TELEGRAM_NEWS_RKB_MESSAGE,
-    ASU_HOUSING_LOCATION_RKB_MESSAGE
+    ASU_BUILDINGS_LOCATION_RKB_MESSAGE
 )
 
 from keyboards import get_schedule_menu_rkb, get_asu_telegram_news_ikb, get_chat_gpt_menu_rkb
@@ -29,7 +29,7 @@ from aiogram.dispatcher import FSMContext
         SCHEDULE_MENU_RKB_MESSAGE,
         CHAT_GPT_MENU_RKB_MESSAGE,
         ASU_TELEGRAM_NEWS_RKB_MESSAGE,
-        ASU_HOUSING_LOCATION_RKB_MESSAGE
+        ASU_BUILDINGS_LOCATION_RKB_MESSAGE
     ],
     content_types=types.ContentType.TEXT,
     state=MenuStatesGroup.main_menu

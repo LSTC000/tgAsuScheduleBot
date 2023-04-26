@@ -1,5 +1,5 @@
 ASU_TELEGRAM_NEWS_RKB_MESSAGE = 'Новости АГУ 📢'
-ASU_HOUSING_LOCATION_RKB_MESSAGE = 'Корпусы АГУ 🏫'
+ASU_BUILDINGS_LOCATION_RKB_MESSAGE = 'Корпуса АГУ 🏫'
 
 CANCEL_TO_MAIN_MENU_RKB_MESSAGE = '⬅️ Вернуться в главное меню'
 

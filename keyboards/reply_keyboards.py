@@ -2,7 +2,7 @@ from data.config import RESIZE_KEYBOARD
 
 from data.messages import (
     ASU_TELEGRAM_NEWS_RKB_MESSAGE,
-    ASU_HOUSING_LOCATION_RKB_MESSAGE,
+    ASU_BUILDINGS_LOCATION_RKB_MESSAGE,
     CLEAR_CHAT_GPT_MESSAGES_RKB_MESSAGE,
     CANCEL_TO_MAIN_MENU_RKB_MESSAGE,
     STUDENT_TARGET_RKB_MESSAGE,
@@ -25,7 +25,7 @@ def get_main_menu_rkb() -> ReplyKeyboardMarkup:
     rkb.row(KeyboardButton(text=CHAT_GPT_MENU_RKB_MESSAGE))
 
     rkb.add(
-        KeyboardButton(text=ASU_HOUSING_LOCATION_RKB_MESSAGE),
+        KeyboardButton(text=ASU_BUILDINGS_LOCATION_RKB_MESSAGE),
         KeyboardButton(text=ASU_TELEGRAM_NEWS_RKB_MESSAGE)
     )
 
