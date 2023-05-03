@@ -92,12 +92,12 @@ async def chat_gpt_response(message: types.Message, state: FSMContext) -> None:
                     for i in range(0, count_tokens, MAX_TOKENS):
                         if count_tokens - i > MAX_TOKENS:
                             text = model_content[i:(MAX_TOKENS * (i + 1))]
-                            await bot.send_message(chat_id=message.from_user.id, text=text)
+                            await bot.send_message(chat_id=message.from_user.id, text=text, parse_mode='')
                         else:
                             text = model_content[i:count_tokens]
-                            await bot.send_message(chat_id=message.from_user.id, text=text)
+                            await bot.send_message(chat_id=message.from_user.id, text=text, parse_mode='')
                 else:
-                    await bot.send_message(chat_id=message.from_user.id, text=model_content)
+                    await bot.send_message(chat_id=message.from_user.id, text=model_content, parse_mode='')
                 # If the message limit for one dialog with Chat GPT is reached.
                 # Then we clear it and send a message to the user about it.
                 if data[COUNT_CHAT_GPT_MESSAGES_KEY] == MAX_CHAT_GPT_MESSAGES:
