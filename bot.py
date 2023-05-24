@@ -27,7 +27,15 @@ from handlers import (
 
 from aiogram import Bot, Dispatcher
 from aiogram.utils import executor
-from aiogram.utils.exceptions import BotBlocked
+from aiogram.utils.exceptions import (
+    BotBlocked,
+    ChatNotFound,
+    UserDeactivated,
+    MigrateToChat,
+    Unauthorized,
+    BadRequest,
+    RetryAfter
+)
 
 
 def register_all_handlers(dispatcher: Dispatcher):
@@ -70,7 +78,7 @@ async def on_startup(dispatcher: Dispatcher):
     for user in users:
         try:
             await bot.send_message(chat_id=user[0], text=USERS_STARTUP_MESSAGE, disable_notification=True)
-        except BotBlocked:
+        except (BotBlocked, ChatNotFound, UserDeactivated, MigrateToChat, Unauthorized, BadRequest, RetryAfter):
             pass
 
     logger.info('Starting bot!')
@@ -83,7 +91,7 @@ async def on_shutdown(dispatcher: Dispatcher):
     for user in users:
         try:
             await bot.send_message(chat_id=user[0], text=USERS_SHUTDOWN_MESSAGE, disable_notification=True)
-        except BotBlocked:
+        except (BotBlocked, ChatNotFound, UserDeactivated, MigrateToChat, Unauthorized, BadRequest, RetryAfter):
             pass
 
     logger.info('Closing PostgreSQL connection')
