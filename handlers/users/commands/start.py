@@ -18,7 +18,7 @@ from utils import rate_limit
 
 from aiogram import types
 from aiogram.dispatcher import FSMContext
-from aiogram.utils.exceptions import MessageToEditNotFound
+from aiogram.utils.exceptions import MessageToEditNotFound, MessageNotModified
 
 
 @dp.message_handler(commands=['start'], state='*')
@@ -49,7 +49,7 @@ async def start_command(message: types.Message, state: FSMContext) -> None:
                     )
 
                 data.clear()
-            except (KeyError, MessageToEditNotFound):
+            except (KeyError, MessageToEditNotFound, MessageNotModified):
                 data.clear()
     # Clear all user data in memory storage.
     if current_state == MenuStatesGroup.chat_gpt_menu.state:
