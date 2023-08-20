@@ -34,7 +34,7 @@ import httpx
 
 async def get_alleged_targets_urls_dict(user_id: int, target: str, alleged_target_url: str) -> Union[int, dict]:
     '''
-    :param user_id: Telegram user user id.
+    :param user_id: Telegram user id.
     :param target: STUDENT_TARGET or LECTURER_TARGET from data/config/parser/config.
     :param alleged_target_url: Url to search for the alleged targets.
         Example: https://www.asu.ru/timetable/search/students/?query=404.
