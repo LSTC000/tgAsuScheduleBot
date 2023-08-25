@@ -1,6 +1,6 @@
 from typing import Union
 
-import pymorphy2
+import pymorphy3
 
 
 def nouns_and_nominative_case(text: str) -> Union[str, None]:
@@ -13,7 +13,7 @@ def nouns_and_nominative_case(text: str) -> Union[str, None]:
     None - If there are no nouns in the text.
     '''
 
-    morph = pymorphy2.MorphAnalyzer()
+    morph = pymorphy3.MorphAnalyzer()
 
     nouns_list = []
 
